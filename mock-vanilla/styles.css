@@ -1,0 +1,43 @@
+#header {
+  text-align: center;
+}
+.repl {
+  position: relative;
+  min-height: 95vh;
+}
+
+.repl-history {
+  height: 55vh;
+  margin: auto;
+  display: block;
+  overflow: scroll;
+}
+
+.repl-input {
+  margin: auto;
+  height: 10vh;
+}
+.repl-command-box {
+  width: 90%;
+  margin: auto;
+  display: block;
+}
+
+/* TODO WITH TA: Style your new button! */
+button {
+  background-color: #573450;
+  color: rgb(223, 246, 174);
+  padding: 150px 320px;
+  font-size: 80px;
+  cursor: zoom-out;
+  margin: auto;
+  display: block;
+  text-decoration: aliceblue;
+}
+
+.button:hover {
+  background-color: #ff0000;
+  color: rgb(102, 148, 3);
+  transition-duration: 0.4s;
+}
+/* TODO: Add some other CSS change! */
