@@ -10,21 +10,29 @@ export function REPLHistory(props: REPLHistoryProps) {
   return (
     <div className="repl-history">
       {Object.keys(props.history).map((key, i) => {
-        const command = key.split("_")[0]; // Extracting command before the underscore, avoid printing timestamp
-        const output = props.history[key];
+        const command = key.split("_")[0]; // Extracting command before the underscore
+        let output = props.history[key];
         if (props.mode === 0) {
           // 'brief' mode: display only the output
-          return <p key={i}>{output}</p>;
+          const outputLines = output
+            .split("<br>")
+            .map((line, index) => <p key={index}>{line}</p>);
+          return <div key={i}>{outputLines}</div>;
         } else {
           // 'verbose' mode: display command and output
+          const outputLines = output.split("<br>").map((line, index) => (
+            <span key={index}>
+              {line}
+              <br />
+            </span>
+          ));
           return (
             <div key={i}>
               <p>
                 <strong>Command:</strong> {command}
               </p>
               <p>
-                <strong>Output:</strong>{" "}
-                <span dangerouslySetInnerHTML={{ __html: output }} />
+                <strong>Output:</strong> {outputLines}
               </p>
             </div>
           );
