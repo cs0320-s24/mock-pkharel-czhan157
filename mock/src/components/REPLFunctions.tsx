@@ -23,7 +23,7 @@ const REPLFunctions: React.FC<REPLFunctionsProps> = (props) => {
 
   useEffect(() => {
     handleCommands();
-  }, [props.currCommand]); // Run handleCommands whenever currCommand changes
+  }, [props.currCommand, searchQuery]);
 
   const handleCommands = () => {
     const command = props.currCommand;
@@ -72,6 +72,7 @@ const REPLFunctions: React.FC<REPLFunctionsProps> = (props) => {
   };
 
   const handleSearch = () => {
+    console.log(searchQuery);
     if (searchQuery.length !== 3) {
       props.setHistory((prevHistory) => ({
         ...prevHistory,

@@ -12,7 +12,6 @@ interface REPLInputProps {
 
 export function REPLInput(props: REPLInputProps) {
   const [commandString, setCommandString] = useState<string>("");
-  const [currCommand, setCurrCommand] = useState<string>("");
 
   const validCommands: string[] = [
     "mode",
@@ -45,11 +44,11 @@ export function REPLInput(props: REPLInputProps) {
     if (command === "mode") {
       handleMode(words);
     } else if (command === "load_file") {
-      setCurrCommand(command);
+      props.setCurrCommand(command);
     } else if (command === "view") {
-      setCurrCommand(command);
+      props.setCurrCommand(command);
     } else if (command === "search") {
-      setCurrCommand(command);
+      props.setCurrCommand(command);
     } else if (command === "help") {
       handleHelp(words);
     } else if (command === "clear") {
