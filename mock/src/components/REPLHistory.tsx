@@ -10,6 +10,7 @@ export function REPLHistory(props: REPLHistoryProps) {
   return (
     <div className="repl-history">
       {Object.keys(props.history).map((key, i) => {
+        const command = key.split("_")[0]; // Extracting command before the underscore, avoid printing timestamp
         const output = props.history[key];
         if (props.mode === 0) {
           // 'brief' mode: display only the output
@@ -19,7 +20,7 @@ export function REPLHistory(props: REPLHistoryProps) {
           return (
             <div key={i}>
               <p>
-                <strong>Command:</strong> {key}
+                <strong>Command:</strong> {command}
               </p>
               <p>
                 <strong>Output:</strong>{" "}

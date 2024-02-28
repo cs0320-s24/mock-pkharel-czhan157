@@ -27,7 +27,8 @@ export function REPLInput(props: REPLInputProps) {
     } else {
       props.setHistory((prevHistory) => ({
         ...prevHistory,
-        [commandString]:
+        // Append timestamp
+        [`${commandString}_${Date.now().toString()}`]:
           "Not a valid command! Use 'help' to see a list of valid commands!",
       }));
     }
@@ -36,6 +37,7 @@ export function REPLInput(props: REPLInputProps) {
 
   const handleCommands = (words: string[]) => {
     const command = words[0];
+    setCommandString(command);
 
     if (command === "mode") {
       handleMode(words);
@@ -58,20 +60,25 @@ export function REPLInput(props: REPLInputProps) {
     if (words.length !== 2) {
       props.setHistory((prevHistory) => ({
         ...prevHistory,
-        [commandString]:
+        // Append timestamp
+        [`${commandString}_${Date.now().toString()}`]:
           "Invalid syntax! Use 'help' to see the correct syntax!",
       }));
     } else if (words[1] === "brief") {
       props.setMode(0);
       props.setHistory((prevHistory) => ({
         ...prevHistory,
-        [commandString]: "Success! Now in brief mode!",
+        // Append timestamp
+        [`${commandString}_${Date.now().toString()}`]:
+          "Success! Now in brief mode!",
       }));
     } else if (words[1] === "verbose") {
       props.setMode(1);
       props.setHistory((prevHistory) => ({
         ...prevHistory,
-        [commandString]: "Success! Now in verbose mode!",
+        // Append timestamp
+        [`${commandString}_${Date.now().toString()}`]:
+          "Success! Now in verbose mode!",
       }));
     }
   };
@@ -92,7 +99,8 @@ export function REPLInput(props: REPLInputProps) {
     if (words.length !== 1) {
       props.setHistory((prevHistory) => ({
         ...prevHistory,
-        [commandString]:
+        // Append timestamp
+        [`${commandString}_${Date.now().toString()}`]:
           "Invalid syntax! Use 'help' to see the correct syntax!",
       }));
     } else {
@@ -108,7 +116,7 @@ export function REPLInput(props: REPLInputProps) {
 
       props.setHistory((prevHistory) => ({
         ...prevHistory,
-        [commandString]: helpMessage,
+        [`${commandString}_${Date.now().toString()}`]: helpMessage, // Append timestamp
       }));
     }
   };
@@ -117,11 +125,12 @@ export function REPLInput(props: REPLInputProps) {
     if (words.length !== 1) {
       props.setHistory((prevHistory) => ({
         ...prevHistory,
-        [commandString]:
+        // Append timestamp
+        [`${commandString}_${Date.now().toString()}`]:
           "Invalid syntax! Use 'help' to see the correct syntax!",
       }));
     } else {
-      props.setHistory({});
+      props.setHistory({}); // Clear history
     }
   };
 
@@ -129,7 +138,8 @@ export function REPLInput(props: REPLInputProps) {
     if (words.length !== 1) {
       props.setHistory((prevHistory) => ({
         ...prevHistory,
-        [commandString]:
+        // Append timestamp
+        [`${commandString}_${Date.now().toString()}`]:
           "Invalid syntax! Use 'help' to see the correct syntax!",
       }));
     } else {
@@ -139,7 +149,7 @@ export function REPLInput(props: REPLInputProps) {
           : "Currently in verbose mode!";
       props.setHistory((prevHistory) => ({
         ...prevHistory,
-        [commandString]: modeMessage,
+        [`${commandString}_${Date.now().toString()}`]: modeMessage, // Append timestamp
       }));
     }
   };
