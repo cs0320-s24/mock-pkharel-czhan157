@@ -1,4 +1,4 @@
-import React from "react";
+import { Dispatch } from "react";
 import "../styles/main.css";
 
 interface REPLHistoryProps {
@@ -18,8 +18,13 @@ export function REPLHistory(props: REPLHistoryProps) {
           // 'verbose' mode: display command and output
           return (
             <div key={i}>
-              <p>Command: {key}</p>
-              <p>Output: {output}</p>
+              <p>
+                <strong>Command:</strong> {key}
+              </p>
+              <p>
+                <strong>Output:</strong>{" "}
+                <span dangerouslySetInnerHTML={{ __html: output }} />
+              </p>
             </div>
           );
         }
