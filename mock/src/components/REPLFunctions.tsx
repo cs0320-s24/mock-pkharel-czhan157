@@ -1,10 +1,28 @@
 import React, { useState, ChangeEvent } from "react";
 import CSVLoader from "./CSVLoaderProps"; 
 
-const CSVComponent: React.FC = () => {
+interface CSVLoaderProps {
+  filePath: string;
+}
+
+
+
+const CSVComponent: React.FC<CSVLoaderProps> = ({ filePath }) => {
   const [csvData, setCsvData] = useState<string[][]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchResults, setSearchResults] = useState<string[][]>([]);
+
+  const exampleCSV1: string[][] = [
+    ["header1", "header2"],
+    ["data1", "data2"],
+    ["data3", "data4"],
+  ];
+
+  const mockedFiles: Record<string, string[][]> = {
+    "example.csv": exampleCSV1,
+  };
+
+  const data: string[][] = mockedFiles[filePath] || [];
 
   const handleLoadFile = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
