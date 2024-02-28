@@ -1,5 +1,10 @@
 import React, { useState, ChangeEvent } from "react";
-import CSVLoader from "./CSVLoaderProps"; 
+import CSVLoader from "./CSVLoaderProps";
+
+interface REPLFunctionsProps {
+  currCommand: string;
+  setCurrCommand: (command: string) => typeof useState<string>;
+}
 
 const CSVComponent: React.FC = () => {
   const [csvData, setCsvData] = useState<string[][]>([]);
@@ -35,8 +40,8 @@ const CSVComponent: React.FC = () => {
   };
 
   const parseCSV = (csvData: string): string[][] => {
-  return csvData.split('\n').map(row => row.split(','));
-  }
+    return csvData.split("\n").map((row) => row.split(","));
+  };
 
   return (
     <div>

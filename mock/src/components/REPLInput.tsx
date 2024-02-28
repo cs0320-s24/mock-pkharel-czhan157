@@ -6,10 +6,13 @@ interface REPLInputProps {
   setHistory: Dispatch<SetStateAction<{ [key: string]: string }>>;
   mode: number;
   setMode: Dispatch<SetStateAction<number>>;
+  currCommand: string;
+  setCurrCommand: Dispatch<SetStateAction<string>>;
 }
 
 export function REPLInput(props: REPLInputProps) {
   const [commandString, setCommandString] = useState<string>("");
+  const [currCommand, setCurrCommand] = useState<string>("");
 
   const validCommands: string[] = [
     "mode",
@@ -42,11 +45,11 @@ export function REPLInput(props: REPLInputProps) {
     if (command === "mode") {
       handleMode(words);
     } else if (command === "load_file") {
-      handleLoadFile(words);
+      setCurrCommand(command);
     } else if (command === "view") {
-      handleView(words);
+      setCurrCommand(command);
     } else if (command === "search") {
-      handleSearch(words);
+      setCurrCommand(command);
     } else if (command === "help") {
       handleHelp(words);
     } else if (command === "clear") {
@@ -81,18 +84,6 @@ export function REPLInput(props: REPLInputProps) {
           "Success! Now in verbose mode!",
       }));
     }
-  };
-
-  const handleLoadFile = (words: string[]) => {
-    // Implement handleLoadFile functionality
-  };
-
-  const handleView = (words: string[]) => {
-    // Implement handleView functionality
-  };
-
-  const handleSearch = (words: string[]) => {
-    // Implement handleSearch functionality
   };
 
   const handleHelp = (words: string[]) => {

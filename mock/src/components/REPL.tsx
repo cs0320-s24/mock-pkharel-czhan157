@@ -16,6 +16,7 @@ export default function REPL() {
   // TODO: Add some kind of shared state that holds all the commands submitted.
   const [history, setHistory] = useState<{ [key: string]: string }>({});
   const [mode, setMode] = useState<number>(0);
+  const [currCommand, setCurrCommand] = useState<string>("");
 
   return (
     <div className="repl">
@@ -23,8 +24,13 @@ export default function REPL() {
       component or somewhere else depending on your component organization. What are the pros and cons of each? */}
       {/* TODO: Update your REPLHistory and REPLInput to take in new shared state as props */}
       <REPLHistory mode={mode} history={history} />
-      <hr></hr>
+      <REPLFunctions
+        currCommand={currCommand}
+        setCurrCommand={setCurrCommand}
+      />
       <REPLInput
+        currCommand={currCommand}
+        setCurrCommand={setCurrCommand}
         mode={mode}
         setMode={setMode}
         history={history}
