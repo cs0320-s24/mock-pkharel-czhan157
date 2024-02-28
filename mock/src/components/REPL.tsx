@@ -2,6 +2,7 @@ import { useState } from "react";
 import "../styles/main.css";
 import { REPLHistory } from "./REPLHistory";
 import { REPLInput } from "./REPLInput";
+import REPLFunctions from "./REPLFunctions";
 
 /* 
   You'll want to expand this component (and others) for the sprints! Remember 
@@ -27,6 +28,8 @@ export default function REPL() {
       <REPLFunctions
         currCommand={currCommand}
         setCurrCommand={setCurrCommand}
+        history={history}
+        setHistory={setHistory}
       />
       <REPLInput
         currCommand={currCommand}
