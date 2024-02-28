@@ -21,6 +21,7 @@ export function REPLInput(props: REPLInputProps) {
     "search",
     "help",
     "clear",
+    "check_mode",
   ];
   const words = commandString.split(" ");
 
@@ -35,19 +36,6 @@ export function REPLInput(props: REPLInputProps) {
       ]);
     }
     setCommandString("");
-  };
-
-  const handleMode = (words: string[]) => {
-    if (words.length != 2) {
-      props.setHistory([
-        ...props.history,
-        "Invalid syntax! Use 'help' to see the correct syntax!",
-      ]);
-    } else if (words[1] === "brief") {
-      props.setMode(0);
-    } else if (words[1] === "verbose") {
-      props.setMode(1);
-    }
   };
 
   const handleCommands = (words: string[]) => {
@@ -65,6 +53,29 @@ export function REPLInput(props: REPLInputProps) {
       handleHelp(words);
     } else if (command === "clear") {
       handleClear(words);
+    } else if (command === "check_mode") {
+      handleCheckMode(words);
+    }
+  };
+
+  const handleMode = (words: string[]) => {
+    if (words.length != 2) {
+      props.setHistory([
+        ...props.history,
+        "Invalid syntax! Use 'help' to see the correct syntax!",
+      ]);
+    } else if (words[1] === "brief") {
+      props.setMode(0);
+      props.setHistory([
+        ...props.history,
+        "Success! Now in brief mode! Use 'mode verbose' to switch to verbose mode!",
+      ]);
+    } else if (words[1] === "verbose") {
+      props.setMode(1);
+      props.setHistory([
+        ...props.history,
+        "Success! Now in verbose mode! Use 'mode brief' to switch to brief mode!",
+      ]);
     }
   };
 
@@ -73,17 +84,6 @@ export function REPLInput(props: REPLInputProps) {
   const handleView = (words: string[]) => {};
 
   const handleSearch = (words: string[]) => {};
-
-  const handleClear = (words: string[]) => {
-    if (words.length != 1) {
-      props.setHistory([
-        ...props.history,
-        "Invalid syntax! Use 'help' to see the correct syntax!",
-      ]);
-    } else {
-      props.setHistory([]);
-    }
-  };
 
   const handleHelp = (words: string[]) => {
     if (words.length != 1) {
@@ -100,8 +100,35 @@ export function REPLInput(props: REPLInputProps) {
         "view [filename]: displays the contents of the file. Arguments: 1.",
         "search [column] [value]: searches the file and returns the rows of the CSV where <value> is present in <column>. Arguments: 3.",
         "help: displays this helpful message! Arguments: 1.",
+        "check_mode: checks the current mode. Arguments: 1.",
         "clear: clears search history. Arguments: 1.",
       ]);
+    }
+  };
+
+  const handleClear = (words: string[]) => {
+    if (words.length != 1) {
+      props.setHistory([
+        ...props.history,
+        "Invalid syntax! Use 'help' to see the correct syntax!",
+      ]);
+    } else {
+      props.setHistory([]);
+    }
+  };
+
+  const handleCheckMode = (words: string[]) => {
+    if (words.length != 1) {
+      props.setHistory([
+        ...props.history,
+        "Invalid syntax! Use 'help' to see the correct syntax!",
+      ]);
+    } else {
+      if (props.mode === 0) {
+        props.setHistory([...props.history, "Currently in brief mode!"]);
+      } else {
+        props.setHistory([...props.history, "Currently in verbose mode!"]);
+      }
     }
   };
 
