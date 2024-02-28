@@ -1,19 +1,16 @@
-import "../styles/main.css";
 import { Dispatch, SetStateAction, useState } from "react";
 import { ControlledInput } from "./ControlledInput";
 
 interface REPLInputProps {
-  history: string[];
-  setHistory: Dispatch<SetStateAction<string[]>>;
+  history: { [key: string]: string };
+  setHistory: Dispatch<SetStateAction<{ [key: string]: string }>>;
   mode: number;
   setMode: Dispatch<SetStateAction<number>>;
 }
 
 export function REPLInput(props: REPLInputProps) {
-  // Remember: let React manage state in your webapp.
-  // Manages the contents of the input box
   const [commandString, setCommandString] = useState<string>("");
-  const [count, setCount] = useState<number>(0);
+
   const validCommands: string[] = [
     "mode",
     "load_file",
@@ -23,121 +20,129 @@ export function REPLInput(props: REPLInputProps) {
     "clear",
     "check_mode",
   ];
-  const words = commandString.split(" ");
 
   const handleSubmit = () => {
-    setCount(count + 1);
-    if (validCommands.includes(words[0])) {
-      handleCommands(words);
+    const timestamp = Date.now().toString();
+    if (validCommands.includes(commandString.split(" ")[0])) {
+      handleCommands(commandString.split(" "), timestamp);
     } else {
-      props.setHistory([
-        ...props.history,
-        "Not a valid command! Use 'help' to see a list of valid commands!",
-      ]);
+      props.setHistory((prevHistory) => ({
+        ...prevHistory,
+        [timestamp]:
+          "Not a valid command! Use 'help' to see a list of valid commands!",
+      }));
     }
     setCommandString("");
   };
 
-  const handleCommands = (words: string[]) => {
+  const handleCommands = (words: string[], timestamp: string) => {
     const command = words[0];
 
     if (command === "mode") {
-      handleMode(words);
+      handleMode(words, timestamp);
     } else if (command === "load_file") {
-      handleLoadFile(words);
+      handleLoadFile(words, timestamp);
     } else if (command === "view") {
-      handleView(words);
+      handleView(words, timestamp);
     } else if (command === "search") {
-      handleSearch(words);
+      handleSearch(words, timestamp);
     } else if (command === "help") {
-      handleHelp(words);
+      handleHelp(words, timestamp);
     } else if (command === "clear") {
-      handleClear(words);
+      handleClear(words, timestamp);
     } else if (command === "check_mode") {
-      handleCheckMode(words);
+      handleCheckMode(words, timestamp);
     }
   };
 
-  const handleMode = (words: string[]) => {
-    if (words.length != 2) {
-      props.setHistory([
-        ...props.history,
-        "Invalid syntax! Use 'help' to see the correct syntax!",
-      ]);
+  const handleMode = (words: string[], timestamp: string) => {
+    if (words.length !== 2) {
+      props.setHistory((prevHistory) => ({
+        ...prevHistory,
+        [timestamp]: "Invalid syntax! Use 'help' to see the correct syntax!",
+      }));
     } else if (words[1] === "brief") {
       props.setMode(0);
-      props.setHistory([
-        ...props.history,
-        "Success! Now in brief mode! Use 'mode verbose' to switch to verbose mode!",
-      ]);
+      props.setHistory((prevHistory) => ({
+        ...prevHistory,
+        [timestamp]: "Success! Now in brief mode!",
+      }));
     } else if (words[1] === "verbose") {
       props.setMode(1);
-      props.setHistory([
-        ...props.history,
-        "Success! Now in verbose mode! Use 'mode brief' to switch to brief mode!",
-      ]);
+      props.setHistory((prevHistory) => ({
+        ...prevHistory,
+        [timestamp]: "Success! Now in verbose mode!",
+      }));
     }
   };
 
-  const handleLoadFile = (words: string[]) => {};
+  const handleLoadFile = (words: string[], timestamp: string) => {};
 
-  const handleView = (words: string[]) => {};
+  const handleView = (words: string[], timestamp: string) => {};
 
-  const handleSearch = (words: string[]) => {};
+  const handleSearch = (words: string[], timestamp: string) => {};
 
-  const handleHelp = (words: string[]) => {
-    if (words.length != 1) {
-      props.setHistory([
-        ...props.history,
-        "Invalid syntax! Use 'help' to see the correct syntax!",
-      ]);
+  const handleHelp = (words: string[], timestamp: string) => {
+    if (words.length !== 1) {
+      props.setHistory((prevHistory) => ({
+        ...prevHistory,
+        [timestamp]: "Invalid syntax! Use 'help' to see the correct syntax!",
+      }));
     } else {
-      props.setHistory([
-        ...props.history,
-        "Syntax guide: All the commands should be lowercase, and the arguments should be separated by a space. Make sure commands are given the correct amount of arguments.",
-        "mode [brief/verbose]: changes the mode of displaying results of the program. Arguments: 2.",
-        "load_file [filename]: loads a file into the program. You will need to run this before running view or search. Arguments: 2.",
-        "view [filename]: displays the contents of the file. Arguments: 1.",
-        "search [column] [value]: searches the file and returns the rows of the CSV where <value> is present in <column>. Arguments: 3.",
-        "help: displays this helpful message! Arguments: 1.",
-        "check_mode: checks the current mode. Arguments: 1.",
-        "clear: clears search history. Arguments: 1.",
-      ]);
+      const helpLines = {
+        line1:
+          "Syntax guide: All the commands should be lowercase, and the arguments should be separated by a space. Make sure commands are given the correct amount of arguments. Make sure there aren't any unnecessary spaces. Here are the commands you can use:",
+        line2:
+          "mode [brief/verbose]: changes the mode of displaying results of the program. Arguments: 2.",
+        line3:
+          "load_file [filename]: loads a file into the program. You will need to run this before running view or search. Arguments: 2.",
+        line4:
+          "view [filename]: displays the contents of the file. Arguments: 1.",
+        line5:
+          "search [column] [value]: searches the file and returns the rows of the CSV where <value> is present in <column>. Arguments: 3.",
+        line6: "help: displays this helpful message! Arguments: 1.",
+        line7: "check_mode: checks the current mode. Arguments: 1.",
+        line8:
+          "clear: clears search history. Will not display verbose output, will simply rid the screen of past output.  Arguments: 1.",
+      };
+      props.setHistory((prevHistory) => ({
+        ...prevHistory,
+        ...helpLines,
+      }));
     }
   };
 
-  const handleClear = (words: string[]) => {
-    if (words.length != 1) {
-      props.setHistory([
-        ...props.history,
-        "Invalid syntax! Use 'help' to see the correct syntax!",
-      ]);
+  const handleClear = (words: string[], timestamp: string) => {
+    if (words.length !== 1) {
+      props.setHistory((prevHistory) => ({
+        ...prevHistory,
+        [timestamp]: "Invalid syntax! Use 'help' to see the correct syntax!",
+      }));
     } else {
-      props.setHistory([]);
+      props.setHistory({});
     }
   };
 
-  const handleCheckMode = (words: string[]) => {
-    if (words.length != 1) {
-      props.setHistory([
-        ...props.history,
-        "Invalid syntax! Use 'help' to see the correct syntax!",
-      ]);
+  const handleCheckMode = (words: string[], timestamp: string) => {
+    if (words.length !== 1) {
+      props.setHistory((prevHistory) => ({
+        ...prevHistory,
+        [timestamp]: "Invalid syntax! Use 'help' to see the correct syntax!",
+      }));
     } else {
-      if (props.mode === 0) {
-        props.setHistory([...props.history, "Currently in brief mode!"]);
-      } else {
-        props.setHistory([...props.history, "Currently in verbose mode!"]);
-      }
+      const modeMessage =
+        props.mode === 0
+          ? "Currently in brief mode!"
+          : "Currently in verbose mode!";
+      props.setHistory((prevHistory) => ({
+        ...prevHistory,
+        [timestamp]: modeMessage,
+      }));
     }
   };
 
   return (
     <div className="repl-input">
-      {/* This is a comment within the JSX. Notice that it's a TypeScript comment wrapped in
-            braces, so that React knows it should be interpreted as TypeScript */}
-      {/* I opted to use this HTML tag; you don't need to. It structures multiple input fields
-            into a single unit, which makes it easier for screenreaders to navigate. */}
       <fieldset>
         <legend>Enter a command:</legend>
         <ControlledInput
@@ -146,7 +151,7 @@ export function REPLInput(props: REPLInputProps) {
           ariaLabel={"Command input"}
         />
       </fieldset>
-      <button onClick={handleSubmit}>Submitted {count} times!</button>
+      <button onClick={handleSubmit}>Run Command!</button>
     </div>
   );
 }
