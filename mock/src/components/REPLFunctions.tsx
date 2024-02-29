@@ -39,7 +39,9 @@ const REPLFunctions: React.FC<REPLFunctionsProps> = (props) => {
 
   const handleLoadFile = () => {
     const words = searchQuery.split(" ");
+    console.log(words);
     if (words.length !== 2) {
+      
       props.setHistory((prevHistory) => ({
         ...prevHistory,
         [`${searchQuery}_${Date.now().toString()}`]:

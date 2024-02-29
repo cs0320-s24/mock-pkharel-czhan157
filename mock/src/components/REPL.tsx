@@ -2,7 +2,7 @@ import { useState } from "react";
 import "../styles/main.css";
 import { REPLHistory } from "./REPLHistory";
 import { REPLInput } from "./REPLInput";
-import REPLFunctions from "./REPLFunctions";
+//import REPLFunctions from "./REPLFunctions";
 
 /* 
   You'll want to expand this component (and others) for the sprints! Remember 
@@ -25,12 +25,12 @@ export default function REPL() {
       component or somewhere else depending on your component organization. What are the pros and cons of each? */}
       {/* TODO: Update your REPLHistory and REPLInput to take in new shared state as props */}
       <REPLHistory mode={mode} history={history} />
-      <REPLFunctions
+      {/* <REPLFunctions
         currCommand={currCommand}
         setCurrCommand={setCurrCommand}
         history={history}
         setHistory={setHistory}
-      />
+      /> */}
       <REPLInput
         currCommand={currCommand}
         setCurrCommand={setCurrCommand}

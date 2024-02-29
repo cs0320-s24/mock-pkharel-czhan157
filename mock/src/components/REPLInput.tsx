@@ -12,6 +12,9 @@ interface REPLInputProps {
 
 export function REPLInput(props: REPLInputProps) {
   const [commandString, setCommandString] = useState<string>("");
+  const [csvData, setCsvData] = useState<string[][]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchResults, setSearchResults] = useState<string[][]>([]);
 
   const validCommands: string[] = [
     "mode",
@@ -23,7 +26,17 @@ export function REPLInput(props: REPLInputProps) {
     "check_mode",
   ];
 
+  const mockedFiles: Record<string, string[][]> = {
+    "example.csv": [
+      ["header1", "header2"],
+      ["data1", "data2"],
+      ["data3", "data4"],
+    ],
+    // Add more
+  };
+
   const handleSubmit = () => {
+    console.log(commandString);
     if (validCommands.includes(commandString.split(" ")[0])) {
       handleCommands(commandString.split(" "));
     } else {
@@ -40,11 +53,13 @@ export function REPLInput(props: REPLInputProps) {
   const handleCommands = (words: string[]) => {
     const command = words[0];
     setCommandString(command);
-
+    console.log(command);
+    console.log(words);
     if (command === "mode") {
       handleMode(words);
     } else if (command === "load_file") {
       props.setCurrCommand(command);
+      handleLoadFile(words);
     } else if (command === "view") {
       props.setCurrCommand(command);
     } else if (command === "search") {
@@ -55,6 +70,30 @@ export function REPLInput(props: REPLInputProps) {
       handleClear(words);
     } else if (command === "check_mode") {
       handleCheckMode(words);
+    }
+  };
+
+  const handleLoadFile = (words: string[]) => {
+    if (words.length !== 2) {
+      props.setHistory((prevHistory) => ({
+        ...prevHistory,
+        [`${words.join()}_${Date.now().toString()}`]:
+          "File did not load! Ensure correct syntax by using the help command!",
+      }));
+    } else {
+      const filePath = words[1]; // Get the second word as the file path
+      if (!mockedFiles[filePath]) {
+        props.setHistory((prevHistory) => ({
+          ...prevHistory,
+          [`${words.join()}_${Date.now().toString()}`]: "File not found!",
+        }));
+      } else {
+        setCsvData(mockedFiles[filePath]);
+        props.setHistory((prevHistory) => ({
+          ...prevHistory,
+          [`${words.join()}_${Date.now().toString()}`]: "Successfully Loaded!!",
+        }));
+      }
     }
   };
 
