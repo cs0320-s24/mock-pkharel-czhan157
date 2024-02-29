@@ -1,99 +1,103 @@
-import React, { useState, ChangeEvent } from "react";
-import CSVLoader from "./CSVLoaderProps"; 
+import React, { useState, useEffect } from "react";
 
-interface CSVLoaderProps {
-  filePath: string;
+interface REPLFunctionsProps {
+  history: { [key: string]: string };
+  setHistory: React.Dispatch<React.SetStateAction<{ [key: string]: string }>>;
+  currCommand: string;
+  setCurrCommand: React.Dispatch<React.SetStateAction<string>>;
 }
 
-
-
-const CSVComponent: React.FC<CSVLoaderProps> = ({ filePath }) => {
+const REPLFunctions: React.FC<REPLFunctionsProps> = (props) => {
   const [csvData, setCsvData] = useState<string[][]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchResults, setSearchResults] = useState<string[][]>([]);
 
-  const exampleCSV1: string[][] = [
-    ["header1", "header2"],
-    ["data1", "data2"],
-    ["data3", "data4"],
-  ];
-
   const mockedFiles: Record<string, string[][]> = {
-    "example.csv": exampleCSV1,
+    "example.csv": [
+      ["header1", "header2"],
+      ["data1", "data2"],
+      ["data3", "data4"],
+    ],
+    // Add more
   };
 
-  const data: string[][] = mockedFiles[filePath] || [];
+  useEffect(() => {
+    handleCommands();
+  }, [props.currCommand, searchQuery]);
 
-  const handleLoadFile = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        if (event.target) {
-          const result = event.target.result;
-          if (typeof result === "string") {
-            const parsedData: string[][] = parseCSV(result);
-            setCsvData(parsedData);
-          }
-        }
-      };
-      reader.readAsText(file);
+  const handleCommands = () => {
+    const command = props.currCommand;
+    if (command === "load_file") {
+      handleLoadFile();
+    } else if (command === "view") {
+      handleViewData();
+    } else if (command === "search") {
+      handleSearch();
+    }
+  };
+
+  const handleLoadFile = () => {
+    if (searchQuery.length !== 2) {
+      props.setHistory((prevHistory) => ({
+        ...prevHistory,
+        [`${searchQuery}_${Date.now().toString()}`]:
+          "File did not load! Ensure correct syntax by using the help command!",
+      }));
+    } else {
+      const filePath = searchQuery[1];
+      if (!mockedFiles[filePath]) {
+        props.setHistory((prevHistory) => ({
+          ...prevHistory,
+          [`${searchQuery}_${Date.now().toString()}`]: "File not found!",
+        }));
+      } else {
+        setCsvData(mockedFiles[filePath]);
+      }
     }
   };
 
   const handleViewData = () => {
-    console.log(csvData);
+    if (csvData.length === 0 || !props.history.hasOwnProperty("load_file")) {
+      props.setHistory((prevHistory) => ({
+        ...prevHistory,
+        [`${searchQuery}_${Date.now().toString()}`]: "No CSV data loaded!",
+      }));
+    } else {
+      const dataString = csvData.map((row) => row.join(", ")).join("\n");
+      props.setHistory((prevHistory) => ({
+        ...prevHistory,
+        [`${searchQuery}`]: dataString,
+      }));
+    }
   };
 
-  const handleSearch = (column: number | string, value: string) => {
-    const columnIndex =
-      typeof column === "number" ? column : csvData[0].indexOf(column);
-    const results = csvData.filter((row) => row[columnIndex] === value);
-    setSearchResults(results);
+  const handleSearch = () => {
+    console.log(searchQuery);
+    if (searchQuery.length !== 3) {
+      props.setHistory((prevHistory) => ({
+        ...prevHistory,
+        [`${searchQuery}_${Date.now().toString()}`]:
+          "Search syntax invalid! Use 'help' for assistance!",
+      }));
+    } else {
+      const columnIndex = isNaN(parseInt(searchQuery[1]))
+        ? csvData[0].indexOf(searchQuery[1])
+        : parseInt(searchQuery[1]);
+      const valueIndex = searchQuery[2];
+      const results = csvData.filter((row) => {
+        const columnValue = row[columnIndex];
+        return columnValue === valueIndex;
+      });
+      setSearchResults(results);
+      const resultString = results.map((row) => row.join(", ")).join("\n");
+      props.setHistory((prevHistory) => ({
+        ...prevHistory,
+        [`${searchQuery}`]: resultString,
+      }));
+    }
   };
 
-  const parseCSV = (csvData: string): string[][] => {
-  return csvData.split('\n').map(row => row.split(','));
-  }
-
-  return (
-    <div>
-      <input type="file" onChange={handleLoadFile} data-testid="file-input" />
-      <button onClick={handleViewData}>View</button>
-      <input
-        type="text"
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        data-testid="search-input"
-      />
-      <button onClick={() => handleSearch(0, searchQuery)}>Search</button>
-      <table>
-        <thead>
-          <tr>
-            {csvData.length > 0 &&
-              csvData[0].map((cell, index) => <th key={index}>{cell}</th>)}
-          </tr>
-        </thead>
-        <tbody>
-          {searchResults.length > 0
-            ? searchResults.map((row, rowIndex) => (
-                <tr key={rowIndex}>
-                  {row.map((cell, cellIndex) => (
-                    <td key={cellIndex}>{cell}</td>
-                  ))}
-                </tr>
-              ))
-            : csvData.map((row, rowIndex) => (
-                <tr key={rowIndex}>
-                  {row.map((cell, cellIndex) => (
-                    <td key={cellIndex}>{cell}</td>
-                  ))}
-                </tr>
-              ))}
-        </tbody>
-      </table>
-    </div>
-  );
+  return null;
 };
 
-export default CSVComponent;
+export default REPLFunctions;
