@@ -22,6 +22,7 @@ const REPLFunctions: React.FC<REPLFunctionsProps> = (props) => {
   };
 
   useEffect(() => {
+    console.log("Current command:", props.currCommand);
     handleCommands();
   }, [props.currCommand, searchQuery]);
 
@@ -37,14 +38,15 @@ const REPLFunctions: React.FC<REPLFunctionsProps> = (props) => {
   };
 
   const handleLoadFile = () => {
-    if (searchQuery.length !== 2) {
+    const words = searchQuery.split(" ");
+    if (words.length !== 2) {
       props.setHistory((prevHistory) => ({
         ...prevHistory,
         [`${searchQuery}_${Date.now().toString()}`]:
           "File did not load! Ensure correct syntax by using the help command!",
       }));
     } else {
-      const filePath = searchQuery[1];
+      const filePath = words[1]; // Get the second word as the file path
       if (!mockedFiles[filePath]) {
         props.setHistory((prevHistory) => ({
           ...prevHistory,
