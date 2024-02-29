@@ -32,7 +32,25 @@ export function REPLInput(props: REPLInputProps) {
       ["data1", "data2"],
       ["data3", "data4"],
     ],
-    // Add more
+
+    "cats.csv": [
+      ["name", "age"],
+      ["frenchie", "5"],
+      ["fry", "5"],
+      ["french fry", "3"],
+      ["belgian fry", "2"],
+      ["the french one", "1"],
+      ["fry", "0"],
+    ],
+
+    "fruits.csv": [
+      ["name", "color"],
+      ["lemon", "yellow"],
+      ["apple", "red or green"],
+      ["orange", "orange"],
+      ["lime", "green"],
+      ["avocado", "green"],
+    ],
   };
 
   const handleSubmit = () => {
@@ -93,8 +111,9 @@ export function REPLInput(props: REPLInputProps) {
         setCsvData(mockedFiles[filePath]);
         props.setHistory((prevHistory) => ({
           ...prevHistory,
+          [`${words.join()}_${Date.now().toString()}`]: "File successfully loaded",
           //[`${words.join()}_${Date.now().toString()}`]: "load_file",
-          [words[0]]: `${Date.now().toLocaleString()}: file successfully loaded!`,
+          //[words[0]]: `${Date.now().toLocaleString()}: file successfully loaded!`,
         }));
       }
     }
@@ -112,7 +131,8 @@ export function REPLInput(props: REPLInputProps) {
       const dataString = csvData.map((row) => row.join(", ")).join("\n");
       props.setHistory((prevHistory) => ({
         ...prevHistory,
-        [`${searchQuery}`]: dataString,
+        //[`${searchQuery}`]: dataString,
+        [`${searchQuery}_${Date.now().toString()}`]: dataString,
       }));
     }
   };
