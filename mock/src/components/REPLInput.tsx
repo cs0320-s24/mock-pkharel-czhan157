@@ -62,8 +62,10 @@ export function REPLInput(props: REPLInputProps) {
       handleLoadFile(words);
     } else if (command === "view") {
       props.setCurrCommand(command);
+      handleViewData(words);
     } else if (command === "search") {
       props.setCurrCommand(command);
+      handleSearch(words);
     } else if (command === "help") {
       handleHelp(words);
     } else if (command === "clear") {
@@ -91,11 +93,55 @@ export function REPLInput(props: REPLInputProps) {
         setCsvData(mockedFiles[filePath]);
         props.setHistory((prevHistory) => ({
           ...prevHistory,
-          [`${words.join()}_${Date.now().toString()}`]: "Successfully Loaded!!",
+          //[`${words.join()}_${Date.now().toString()}`]: "load_file",
+          [words[0]]: `${Date.now().toLocaleString()}: file successfully loaded!`,
         }));
       }
     }
   };
+
+  const handleViewData = (words: string[]) => {
+    console.log(csvData);
+    console.log(props.history);
+    if (csvData.length === 0 || !props.history.hasOwnProperty("load_file")) {
+      props.setHistory((prevHistory) => ({
+        ...prevHistory,
+        [`${searchQuery}_${Date.now().toString()}`]: "No CSV data loaded!", //property:output string
+      }));
+    } else {
+      const dataString = csvData.map((row) => row.join(", ")).join("\n");
+      props.setHistory((prevHistory) => ({
+        ...prevHistory,
+        [`${searchQuery}`]: dataString,
+      }));
+    }
+  };
+
+    const handleSearch = (searchQuery: string[]) => {
+      console.log(searchQuery);
+      if (searchQuery.length !== 3) {
+        props.setHistory((prevHistory) => ({
+          ...prevHistory,
+          [`${searchQuery}_${Date.now().toString()}`]:
+            "Search syntax invalid! Use 'help' for assistance!",
+        }));
+      } else {
+        const columnIndex = isNaN(parseInt(searchQuery[1]))
+          ? csvData[0].indexOf(searchQuery[1])
+          : parseInt(searchQuery[1]);
+        const valueIndex = searchQuery[2];
+        const results = csvData.filter((row) => {
+          const columnValue = row[columnIndex];
+          return columnValue === valueIndex;
+        });
+        setSearchResults(results);
+        const resultString = results.map((row) => row.join(", ")).join("\n");
+        props.setHistory((prevHistory) => ({
+          ...prevHistory,
+          [`${searchQuery}`]: resultString,
+        }));
+      }
+    };
 
   const handleMode = (words: string[]) => {
     if (words.length !== 2) {
@@ -148,10 +194,10 @@ export function REPLInput(props: REPLInputProps) {
 
   const handleClear = (words: string[]) => {
     if (words.length !== 1) {
+
       props.setHistory((prevHistory) => ({
         ...prevHistory,
-        [`${commandString}_${Date.now().toString()}`]:
-          "Invalid syntax! Use 'help' to see the correct syntax!",
+        [`${searchQuery}`]: `${Date.now().toString()}: Invalid syntax! Use help to see the correct syntax! Date.now().toString()`,
       }));
     } else {
       props.setHistory({});
