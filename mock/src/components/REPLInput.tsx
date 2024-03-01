@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { ControlledInput } from "./ControlledInput";
-import { SearchQuery } from './MockedJSON';
+import { SearchQuery } from "./MockedJSON";
 
 interface REPLInputProps {
   history: { [key: string]: any };
@@ -12,7 +12,7 @@ interface REPLInputProps {
   currFile: string;
   setCurrFile: Dispatch<SetStateAction<string>>;
   mockedFiles: Record<string, string[][]>;
-  mockedSearch: SearchQuery[]; 
+  mockedSearch: SearchQuery[];
 }
 
 export function REPLInput(props: REPLInputProps) {
@@ -31,33 +31,6 @@ export function REPLInput(props: REPLInputProps) {
     "clear",
     "check_mode",
   ];
-
-  // const mockedFiles: Record<string, string[][]> = {
-  //   "example.csv": [
-  //     ["header1", "header2"],
-  //     ["data1", "data2"],
-  //     ["data3", "data4"],
-  //   ],
-
-  //   "cats.csv": [
-  //     ["name", "age"],
-  //     ["frenchie", "5"],
-  //     ["fry", "5"],
-  //     ["french fry", "3"],
-  //     ["belgian fry", "2"],
-  //     ["the french one", "1"],
-  //     ["fry", "0"],
-  //   ],
-
-  //   "fruits.csv": [
-  //     ["name", "color"],
-  //     ["lemon", "yellow"],
-  //     ["apple", "red or green"],
-  //     ["orange", "orange"],
-  //     ["lime", "green"],
-  //     ["avocado", "green"],
-  //   ],
-  // };
 
   const handleSubmit = () => {
     console.log(commandString);
@@ -118,7 +91,8 @@ export function REPLInput(props: REPLInputProps) {
         props.setCurrFile(filePath);
         props.setHistory((prevHistory) => ({
           ...prevHistory,
-          [`${words.join()}_${Date.now().toString()}`]: "File successfully loaded",
+          [`${words.join()}_${Date.now().toString()}`]:
+            "File successfully loaded",
           //[`${words.join()}_${Date.now().toString()}`]: "load_file",
           //[words[0]]: `${Date.now().toLocaleString()}: file successfully loaded!`,
         }));
@@ -129,8 +103,9 @@ export function REPLInput(props: REPLInputProps) {
   const handleViewData = (words: string[]) => {
     console.log(csvData);
     console.log(props.history);
-    console.log(csvData.length)
-    if (csvData.length === 0){ //} || !props.history.hasOwnProperty("load_file")) {
+    console.log(csvData.length);
+    if (csvData.length === 0) {
+      //} || !props.history.hasOwnProperty("load_file")) {
       props.setHistory((prevHistory) => ({
         ...prevHistory,
         [`${searchQuery}_${Date.now().toString()}`]: "No CSV data loaded!", //property:output string
@@ -149,71 +124,71 @@ export function REPLInput(props: REPLInputProps) {
     }
   };
 
-    // const handleSearch = (searchQuery: string[]) => {
-    //   console.log(searchQuery);
-    //   if (searchQuery.length !== 3) {
-    //     props.setHistory((prevHistory) => ({
-    //       ...prevHistory,
-    //       [`${searchQuery}_${Date.now().toString()}`]:
-    //         "Search syntax invalid! Use 'help' for assistance!",
-    //     }));
-    //   } else {
-    //     const columnIndex = isNaN(parseInt(searchQuery[1]))
-    //       ? csvData[0].indexOf(searchQuery[1])
-    //       : parseInt(searchQuery[1]);
-    //     const valueIndex = searchQuery[2];
-    //     const results = csvData.filter((row) => {
-    //       const columnValue = row[columnIndex];
-    //       return columnValue === valueIndex;
-    //     });
-    //     setSearchResults(results);
-    //     const resultString = results.map((row) => row.join(", ")).join("\n");
-    //     props.setHistory((prevHistory) => ({
-    //       ...prevHistory,
-    //       [`${searchQuery}`]: resultString,
-    //     }));
-    //   }
-    // };
-      const handleSearch = (searchQuery: string[]) => {
-        console.log(searchQuery);
-        if (searchQuery.length !== 3) {
+  const handleSearch = (searchQuery: string[]) => {
+    console.log(searchQuery);
+    if (searchQuery.length !== 3) {
+      props.setHistory((prevHistory) => ({
+        ...prevHistory,
+        [`${searchQuery}_${Date.now().toString()}`]:
+          "Search syntax invalid! Use 'help' for assistance!",
+      }));
+    } else {
+      const query = searchQuery[1];
+      const index = searchQuery[2];
+      const foundQuery = props.mockedSearch.find(
+        (item) => item.query === query + "," + index
+      );
+
+      if (foundQuery) {
+        let foundMatch = false; // Flag to track if any matching filename is found
+
+        const results = foundQuery.results;
+        const resultString = results
+          .map((result) => {
+            const fileName = result.file;
+            const searchData = result.data;
+            console.log(result);
+            console.log(fileName);
+            console.log(results);
+            console.log(searchData);
+            console.log(props.currFile);
+            if (fileName === props.currFile) {
+              foundMatch = true; // Set the flag to true if a match is found
+              return `Results from file: ${fileName}\n${searchData
+                .map((row) => row.join(", "))
+                .join("\n")}`;
+            } else {
+              return ""; // Return an empty string if the current file doesn't match
+            }
+          })
+          .filter((result) => result !== ""); // Filter out empty strings
+
+        if (!foundMatch) {
           props.setHistory((prevHistory) => ({
             ...prevHistory,
             [`${searchQuery}_${Date.now().toString()}`]:
-              "Search syntax invalid! Use 'help' for assistance!",
+              "No rresults found!",
           }));
+        
         } else {
-          const query = searchQuery[1];
-          const index = searchQuery[2];
-    const foundQuery = props.mockedSearch.find((item) => item.query === query);
-    if (foundQuery) {
-      const results = foundQuery.results;
-      const resultString = results
-        .map((result) => {
-          const fileName = result.file;
-          const searchData = result.data;
-          if (fileName === props.currFile){
-          //const searchData = props.mockedFiles[fileName];
-          //const filteredData = searchData.filter((row) => {
-          //  const valueIndex = searchQuery[1];
-         //   return row.includes(valueIndex);
-         // });
-          return `Results from file: ${fileName}\n${searchData
-            .map((row) => row.join(", "))
-            .join("\n")}`;
-    }})
-        .join("\n\n");
-      props.setHistory((prevHistory) => ({
-        ...prevHistory,
-        [`${searchQuery}_${Date.now().toString()}`]: resultString,
-      }));
-    } else {
-      props.setHistory((prevHistory) => ({
-        ...prevHistory,
-        [`${searchQuery}_${Date.now().toString()}`]: "No results found!",
-      }));
-    }}}
-  
+          props.setHistory((prevHistory) => ({
+            ...prevHistory,
+            [`${searchQuery}_${Date.now().toString()}`]:
+              resultString.join("\n\n"),
+          }));
+        }
+
+      } else {
+       
+          props.setHistory((prevHistory) => ({
+            ...prevHistory,
+            [`${searchQuery}_${Date.now().toString()}`]:
+              "No results found!",
+          }));
+        }
+      }
+    
+  };
 
   const handleMode = (words: string[]) => {
     if (words.length !== 2) {
@@ -252,7 +227,7 @@ export function REPLInput(props: REPLInputProps) {
         "mode [brief/verbose]: changes the mode of displaying results of the program. Arguments: 2.<br>" +
         "load_file [filename]: loads a file into the program. You will need to run this before running view or search. Arguments: 2.<br>" +
         "view [filename]: displays the contents of the file. Arguments: 1.<br>" +
-        "search [column] [value]: searches the file and returns the rows of the CSV where <value> is present in <column>. Arguments: 3.<br>" +
+        "search [value] [column]: searches the file and returns the rows of the CSV where <value> is present in <column>. Arguments: 3.<br>" +
         "help: displays this helpful message! Arguments: 1.<br>" +
         "check_mode: checks the current mode. Arguments: 1.<br>" +
         "clear: clears search history. Will not display verbose output, will simply rid the screen of past output.  Arguments: 1.";
@@ -266,7 +241,6 @@ export function REPLInput(props: REPLInputProps) {
 
   const handleClear = (words: string[]) => {
     if (words.length !== 1) {
-
       props.setHistory((prevHistory) => ({
         ...prevHistory,
         [`${searchQuery}`]: `${Date.now().toString()}: Invalid syntax! Use help to see the correct syntax! Date.now().toString()`,
@@ -308,8 +282,6 @@ export function REPLInput(props: REPLInputProps) {
       <button aria-label="Run Command!" onClick={handleSubmit}>
         Run Command!
       </button>
-
-
     </div>
   );
 }

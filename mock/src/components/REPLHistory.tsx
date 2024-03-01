@@ -22,18 +22,11 @@ export function REPLHistory(props: REPLHistoryProps) {
             ));
           return (
             <div className="output-wrapper" id={command} key={i}>
-              
               <div className="output-table">{outputLines}</div>
             </div>
           );
         } else {
           // 'verbose' mode: display command and output
-          // const outputLines = output.split("<br>").map((line, index) => (
-          //   <span key={index}>
-          //     {line}
-          //     <br />
-          //   </span>
-          // ));
           const outputLines = output
             .split("<br>")
             .map((line, index) => (

@@ -33,6 +33,8 @@ export const mockedData: Record<string, string[][]> = {
     ["fry", "5"],
     ["french fry", "3"],
     ["belgian fry", "2"],
+    ["belgian fry", "3"],
+    ["belgian fry", "4"],
     ["the french one", "1"],
     ["fry", "0"],
   ],
@@ -44,11 +46,31 @@ export const mockedData: Record<string, string[][]> = {
     ["lime", "green"],
     ["avocado", "green"],
   ],
+
+  "fruitsNoHeader.csv": [
+    ["mango", "orange"],
+    ["strawberry", "red"],
+    ["clementine", "orange"],
+    ["naval orange", "orange"],
+    ["lime", "green"],
+  ],
 };
 
+
+
 export const searchQueries: SearchQuery[] = [
+
+    {query: "data1,0",results: [{ file: "example.csv", data: [["data1", "data2"]] }],},
+
+  {query: "fry,name",results: [{file: "cats.csv",data: [["fry", "5"],["fry", "0"],]}]},
+
+  {query: "french fry,0",results: [{file: "cats.csv",data: [["french fry", "3"]]}]},
+  {query: "belgian fry,0",results: [{file: "cats.csv",data: [["belgian fry", "2"],["belgian fry", "3"], ["belgian fry", "4"]]}]},
+  {query: "belgian fry,name",results: [{file: "cats.csv",data: [["belgian fry", "2"],["belgian fry", "3"], ["belgian fry", "4"]]}]},
+  {query: "french fry,1",results: []},
+
   {
-    query: "fry",
+    query: "fry,0",
     results: [
       {
         file: "cats.csv",
@@ -57,26 +79,14 @@ export const searchQueries: SearchQuery[] = [
           ["fry", "0"],
         ],
       },
-     
     ],
   },
   {
-    query: "green",
+    query: "green,1",
     results: [
-      {
-        file: "fruits.csv",
-        data: [
-          ["lime", "green"],
-          ["avocado", "green"],
-        ],
-      },
-      
-    ],
-  },
-  {
-    query: "data1",
-    results: [{ file: "example.csv", data: [["data1", "data2"]] }],
-    
-  },
- 
+      {file: "fruits.csv",
+        data: [["lime", "green"],["avocado", "green"]]},
+      {file: "fruitsNoHeader.csv",
+        data: [["lime", "green"]]}]},
+  
 ];

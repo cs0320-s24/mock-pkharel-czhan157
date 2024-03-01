@@ -174,3 +174,45 @@ test("i cannot view a csv without loading it first", async ({ page }) => {
     "No CSV data loaded!";
   expect(responseText).toBe(expectedResponseText);
 });
+
+
+test("multiple loading works", async ({ page }) => {
+  await page.getByLabel("Command input").fill("view");
+  await page.getByLabel("Run Command!").click();
+
+  await page.waitForTimeout(5000);
+
+  const responseText = await page.evaluate(() => {
+    const responseElement = document.querySelector(".repl-history > div > div");
+    console.log(responseElement);
+    if (responseElement !== null) {
+      return responseElement.textContent; //.trim();
+    }
+  });
+
+  const expectedResponseText = "No CSV data loaded!";
+  expect(responseText).toBe(expectedResponseText);
+
+  await page
+    .getByLabel("Command input")
+    .fill("load_file example.csv");
+  await page.getByLabel("Run Command!").click();
+
+
+  await page.waitForTimeout(5000); 
+
+  //await page.waitForSelector(".repl-history > div:last-child");
+  // Extract the text content of the response element
+  const updatedText = await page.evaluate(() => {
+    //page.on('console', document => console.log(document));
+    const responseElement = document.querySelector(".repl-history > div > div");
+    console.log(responseElement); // Replace "#responseElementSelector"
+    if (responseElement !== null) {
+      return responseElement.textContent; //.trim();
+    }
+    
+});
+const expectedText = "File successfully loaded";
+expect(updatedText).toBe(expectedText);
+
+})
