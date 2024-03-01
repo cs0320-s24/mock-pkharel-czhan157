@@ -52,5 +52,3 @@ Available Commands:
 - clear: Clears search history (arguments: 1).
 
 # Collaboration
-
-N/A

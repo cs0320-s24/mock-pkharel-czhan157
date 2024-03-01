@@ -153,7 +153,7 @@ export function REPLInput(props: REPLInputProps) {
         props.setCurrFile(filePath);
         props.setHistory((prevHistory) => ({
           ...prevHistory,
-          [`${words.join()}_${Date.now().toString()}`]:
+          [`${words.join()}~${Date.now().toString()}`]:
             "File successfully loaded",
         }));
       }
@@ -170,7 +170,7 @@ export function REPLInput(props: REPLInputProps) {
     if (csvData.length === 0) {
       props.setHistory((prevHistory) => ({
         ...prevHistory,
-        [`${searchQuery}_${Date.now().toString()}`]: "No CSV data loaded!",
+        [`${searchQuery}~${Date.now().toString()}`]: "No CSV data loaded!",
       }));
     } else {
       const tableRows = csvData
@@ -228,7 +228,7 @@ export function REPLInput(props: REPLInputProps) {
         if (!foundMatch) {
           props.setHistory((prevHistory) => ({
             ...prevHistory,
-            [`${searchQuery}_${Date.now().toString()}`]: "No results found!",
+            [`${searchQuery}~${Date.now().toString()}`]: "No results found!",
           }));
         } else {
           const tableHTML = `<table>${tableRows}</table>`;
@@ -240,7 +240,7 @@ export function REPLInput(props: REPLInputProps) {
       } else {
         props.setHistory((prevHistory) => ({
           ...prevHistory,
-          [`${searchQuery}_${Date.now().toString()}`]: "No results found!",
+          [`${searchQuery}~${Date.now().toString()}`]: "No results found!",
         }));
       }
     }
