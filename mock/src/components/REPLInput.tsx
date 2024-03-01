@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { ControlledInput } from "./ControlledInput";
 import { SearchQuery } from "./MockedJSON";
-
+import { REPLFunction } from "./REPLFunction";
 interface REPLInputProps {
   history: { [key: string]: any };
   setHistory: Dispatch<SetStateAction<{ [key: string]: string }>>;
@@ -13,7 +13,12 @@ interface REPLInputProps {
   setCurrFile: Dispatch<SetStateAction<string>>;
   mockedFiles: Record<string, string[][]>;
   mockedSearch: SearchQuery[];
+  customCommands: {
+    name: string;
+    func: (props: REPLFunction) => void;
+  }[];
 }
+
 
 export function REPLInput(props: REPLInputProps) {
   const [commandString, setCommandString] = useState<string>("");
@@ -21,6 +26,7 @@ export function REPLInput(props: REPLInputProps) {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchResults, setSearchResults] = useState<string[][]>([]);
   const [currFile, setCurrFile] = useState<string>("");
+  
 
   const validCommands: string[] = [
     "mode",
@@ -30,6 +36,7 @@ export function REPLInput(props: REPLInputProps) {
     "help",
     "clear",
     "check_mode",
+    ...props.customCommands.map((cmd) => cmd.name),
   ];
 
   const handleSubmit = () => {
@@ -47,29 +54,59 @@ export function REPLInput(props: REPLInputProps) {
     setCommandString("");
   };
 
+  
+
+
   const handleCommands = (words: string[]) => {
+    const inputProps: REPLFunction = {
+    args: words,
+    history: props.history,
+    setHistory: props.setHistory,
+    mode: props.mode,
+    setMode: props.setMode,
+    currCommand: props.currCommand,
+    setCurrCommand: props.setCurrCommand,
+    currFile: props.currFile,
+    setCurrFile: props.setCurrFile,
+    mockedFiles: props.mockedFiles,
+    mockedSearch: props.mockedSearch,
+  };
+
     const command = words[0];
     setCommandString(command);
     console.log(command);
     console.log(words);
     if (command === "mode") {
       handleMode(words);
-    } else if (command === "load_file") {
-      props.setCurrCommand(command);
-      handleLoadFile(words);
-    } else if (command === "view") {
-      props.setCurrCommand(command);
-      handleViewData(words);
-    } else if (command === "search") {
-      props.setCurrCommand(command);
-      handleSearch(words);
-    } else if (command === "help") {
-      handleHelp(words);
-    } else if (command === "clear") {
-      handleClear(words);
-    } else if (command === "check_mode") {
-      handleCheckMode(words);
-    }
+    } else if (command === "load_file" && props.customCommands.some(cmd => cmd.name === "load_file")) {
+       props.setCurrCommand(command);
+       handleLoadFile(words);
+     } else if (command === "view" && props.customCommands.some(cmd => cmd.name === "view")) {
+       props.setCurrCommand(command);
+       handleViewData(words);
+     } else if (
+       command === "search" &&
+       props.customCommands.some((cmd) => cmd.name === "search")
+     ) {
+       props.setCurrCommand(command);
+       handleSearch(words);
+     } else if (command === "help") {
+       handleHelp(words);
+     } else if (command === "clear") {
+       handleClear(words);
+     } else if (command === "check_mode") {
+       handleCheckMode(words);
+     } else {
+       const customCommand = props.customCommands.find(
+         (cmd) => cmd.name === command
+       );
+       if (customCommand) {
+         console.log(customCommand);
+         const result = customCommand.func(inputProps);
+         props.setCurrCommand(command);
+         console.log(result);
+       }
+     }
   };
 
   const handleLoadFile = (words: string[]) => {
@@ -93,8 +130,7 @@ export function REPLInput(props: REPLInputProps) {
           ...prevHistory,
           [`${words.join()}_${Date.now().toString()}`]:
             "File successfully loaded",
-          //[`${words.join()}_${Date.now().toString()}`]: "load_file",
-          //[words[0]]: `${Date.now().toLocaleString()}: file successfully loaded!`,
+          
         }));
       }
     }
@@ -105,10 +141,10 @@ export function REPLInput(props: REPLInputProps) {
     console.log(props.history);
     console.log(csvData.length);
     if (csvData.length === 0) {
-      //} || !props.history.hasOwnProperty("load_file")) {
+      
       props.setHistory((prevHistory) => ({
         ...prevHistory,
-        [`${searchQuery}_${Date.now().toString()}`]: "No CSV data loaded!", //property:output string
+        [`${searchQuery}_${Date.now().toString()}`]: "No CSV data loaded!", 
       }));
     } else {
       const tableRows = csvData
@@ -126,25 +162,25 @@ export function REPLInput(props: REPLInputProps) {
 
   const handleSearch = (searchQuery: string[]) => {
     console.log(searchQuery);
-    if (searchQuery.length !== 3) {
+    if (searchQuery.length < 3) {
       props.setHistory((prevHistory) => ({
         ...prevHistory,
         [`${searchQuery}_${Date.now().toString()}`]:
           "Search syntax invalid! Use 'help' for assistance!",
       }));
     } else {
-      const query = searchQuery[1];
-      const index = searchQuery[2];
+      const query = searchQuery.slice(2).join(" ");
+      const index = searchQuery[1];
       const foundQuery = props.mockedSearch.find(
-        (item) => item.query === query + "," + index
+        (item) => item.query === index + "," + query
       );
 
       if (foundQuery) {
-        let foundMatch = false; // Flag to track if any matching filename is found
+        let foundMatch = false; 
 
         const results = foundQuery.results;
         const tableRows = results
-          .filter((result) => result.file === props.currFile) // Filter results for the current file
+          .filter((result) => result.file === props.currFile) 
           .map((result) => {
             const searchData = result.data;
             foundMatch = true; // Set the flag to true if a match is found
@@ -158,14 +194,11 @@ export function REPLInput(props: REPLInputProps) {
           })
           .join("");
 
-
         if (!foundMatch) {
           props.setHistory((prevHistory) => ({
             ...prevHistory,
-            [`${searchQuery}_${Date.now().toString()}`]:
-              "No results found!",
+            [`${searchQuery}_${Date.now().toString()}`]: "No results found!",
           }));
-        
         } else {
           const tableHTML = `<table>${tableRows}</table>`;
           props.setHistory((prevHistory) => ({
@@ -173,17 +206,13 @@ export function REPLInput(props: REPLInputProps) {
             [`${searchQuery}_${Date.now().toString()}`]: tableHTML,
           }));
         }
-
       } else {
-       
-          props.setHistory((prevHistory) => ({
-            ...prevHistory,
-            [`${searchQuery}_${Date.now().toString()}`]:
-              "No results found!",
-          }));
-        }
+        props.setHistory((prevHistory) => ({
+          ...prevHistory,
+          [`${searchQuery}_${Date.now().toString()}`]: "No results found!",
+        }));
       }
-    
+    }
   };
 
   const handleMode = (words: string[]) => {

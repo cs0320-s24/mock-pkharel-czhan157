@@ -1,4 +1,5 @@
 import { Dispatch } from "react";
+import { REPLFunction, defaultCustomCommands } from "./REPLFunction";
 import "../styles/main.css";
 
 interface REPLHistoryProps {

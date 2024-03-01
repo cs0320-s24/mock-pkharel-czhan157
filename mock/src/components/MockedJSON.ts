@@ -60,17 +60,17 @@ export const mockedData: Record<string, string[][]> = {
 
 export const searchQueries: SearchQuery[] = [
 
-    {query: "data1,0",results: [{ file: "example.csv", data: [["data1", "data2"]] }],},
+    {query: "0,data1",results: [{ file: "example.csv", data: [["data1", "data2"]] }],},
 
-  {query: "fry,name",results: [{file: "cats.csv",data: [["fry", "5"],["fry", "0"],]}]},
+  {query: "name,fry",results: [{file: "cats.csv",data: [["fry", "5"],["fry", "0"],]}]},
 
-  {query: "french fry,0",results: [{file: "cats.csv",data: [["french fry", "3"]]}]},
-  {query: "belgian fry,0",results: [{file: "cats.csv",data: [["belgian fry", "2"],["belgian fry", "3"], ["belgian fry", "4"]]}]},
-  {query: "belgian fry,name",results: [{file: "cats.csv",data: [["belgian fry", "2"],["belgian fry", "3"], ["belgian fry", "4"]]}]},
-  {query: "french fry,1",results: []},
+  {query: "0,french fry",results: [{file: "cats.csv",data: [["french fry", "3"]]}]},
+  {query: "0,belgian fry",results: [{file: "cats.csv",data: [["belgian fry", "2"],["belgian fry", "3"], ["belgian fry", "4"]]}]},
+  {query: "name,belgian fry",results: [{file: "cats.csv",data: [["belgian fry", "2"],["belgian fry", "3"], ["belgian fry", "4"]]}]},
+  {query: "1,french fry",results: []},
 
   {
-    query: "fry,0",
+    query: "0,fry",
     results: [
       {
         file: "cats.csv",
@@ -82,7 +82,7 @@ export const searchQueries: SearchQuery[] = [
     ],
   },
   {
-    query: "green,1",
+    query: "1,green",
     results: [
       {file: "fruits.csv",
         data: [["lime", "green"],["avocado", "green"]]},
