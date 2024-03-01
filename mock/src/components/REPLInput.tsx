@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { ControlledInput } from "./ControlledInput";
 
 interface REPLInputProps {
-  history: { [key: string]: string };
+  history: { [key: string]: any };
   setHistory: Dispatch<SetStateAction<{ [key: string]: string }>>;
   mode: number;
   setMode: Dispatch<SetStateAction<number>>;
@@ -119,20 +119,42 @@ export function REPLInput(props: REPLInputProps) {
     }
   };
 
+  // const handleViewData = (words: string[]) => {
+  //   console.log(csvData);
+  //   console.log(props.history);
+  //   if (csvData.length === 0 || !props.history.hasOwnProperty("load_file")) {
+  //     props.setHistory((prevHistory) => ({
+  //       ...prevHistory,
+  //       [`${searchQuery}_${Date.now().toString()}`]: "No CSV data loaded!", //property:output string
+  //     }));
+  //   } else {
+  //     const dataString = csvData.map((row) => row.join(", ")).join("\n");
+  //     props.setHistory((prevHistory) => ({
+  //       ...prevHistory,
+  //       //[`${searchQuery}`]: dataString,
+  //       [`${searchQuery}_${Date.now().toString()}`]: dataString,
+  //     }));
+  //   }
+  // };
   const handleViewData = (words: string[]) => {
     console.log(csvData);
     console.log(props.history);
-    if (csvData.length === 0 || !props.history.hasOwnProperty("load_file")) {
+    console.log(csvData.length)
+    if (csvData.length === 0){ //} || !props.history.hasOwnProperty("load_file")) {
       props.setHistory((prevHistory) => ({
         ...prevHistory,
         [`${searchQuery}_${Date.now().toString()}`]: "No CSV data loaded!", //property:output string
       }));
     } else {
-      const dataString = csvData.map((row) => row.join(", ")).join("\n");
+      const tableRows = csvData
+        .map((row) => {
+          return `<tr>${row.map((cell) => `<th>${cell}</th>`).join("")}</tr>`;
+        })
+        .join("");
+      const tableHTML = `<table>${tableRows}</table>`;
       props.setHistory((prevHistory) => ({
         ...prevHistory,
-        //[`${searchQuery}`]: dataString,
-        [`${searchQuery}_${Date.now().toString()}`]: dataString,
+        [`${searchQuery}_${Date.now().toString()}`]: tableHTML,
       }));
     }
   };

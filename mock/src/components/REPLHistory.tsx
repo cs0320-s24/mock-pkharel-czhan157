@@ -2,7 +2,7 @@ import { Dispatch } from "react";
 import "../styles/main.css";
 
 interface REPLHistoryProps {
-  history: { [key: string]: string };
+  history: { [key: string]: any };
   mode: number;
 }
 
@@ -12,11 +12,14 @@ export function REPLHistory(props: REPLHistoryProps) {
       {Object.keys(props.history).map((key, i) => {
         const command = key.split("_")[0]; // Extracting command before the underscore
         let output = props.history[key];
+        console.log(output);
         if (props.mode === 0) {
           // 'brief' mode: display only the output
           const outputLines = output
             .split("<br>")
-            .map((line, index) => <p key={index}>{line}</p>);
+            .map((line, index) => (
+              <div key={index} dangerouslySetInnerHTML={{ __html: line }}></div>
+            ));
           return <div key={i}>{outputLines}</div>;
         } else {
           // 'verbose' mode: display command and output

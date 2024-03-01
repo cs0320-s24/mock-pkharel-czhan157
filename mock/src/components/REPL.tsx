@@ -15,7 +15,7 @@ import { REPLInput } from "./REPLInput";
 
 export default function REPL() {
   // TODO: Add some kind of shared state that holds all the commands submitted.
-  const [history, setHistory] = useState<{ [key: string]: string }>({});
+  const [history, setHistory] = useState<{ [key: string]: any }>({});
   const [mode, setMode] = useState<number>(0);
   const [currCommand, setCurrCommand] = useState<string>("");
 
