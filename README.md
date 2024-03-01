@@ -5,38 +5,26 @@ Mock
 Caroline Zhang (czhan157) - Joint Effort
 Prasoon Kharel (pkharel) - Joint Effort
 
-Total time:
+Total time: 15
 
 https://github.com/cs0320-s24/mock-pkharel-czhan157
 
 # Design Choices
 
-- We decided to store the search history data in a hashmpa. By utilizing a hashmap, we ensure fast access to historical commands and their respective outputs. This choice not only enhances the efficiency of command retrieval but also simplifies the implementation of features like verbose mode, where displaying both commands and outputs is required. Additionally, the hashmap's key-value pairs provide a natural association between commands and outputs, facilitating seamless organization and retrieval.
+- Our project consists several components. Our highest level component is App, which contains the outermost information determining whether or not the user is loggined in. Then, we have our LoginButton component which the user can click to become signed in. We have REPL which combines other subcomponents such as REPLInput and REPLHistory, wrapping them in div to be displayed.
+  The REPLInput component receives properties representing the REPL state such as command history, mode, current command, files, and search queries. It validates entered commands against a predefined list, executes commands by invoking corresponding functions, and updates the command history with feedback messages.
 
-- We added additional commands, such as check_mode, clear, and help. These commands were made for testing and for user experience as well.
-  help and check_mode also adhere to verbose mode, but clear simply clears the history map.
+- The REPLHistory component manages the display of commands, their corresponding output, and previous commands. It takes in properties representing the command history and the current mode of the REPL. The component iterates through the command history and formats each command along with its output based on the specified mode. In "brief" mode, it displays only the output. In "verbose" mode, it shows both the command and its output.
 
-- To ensure that each key in the hashmap was unique, we gave each key its timestamp as well, by adding to the key string with a ~,
-  which we filtered out in the REPLHistory class to ensure that verbose mode wasn't printing a long string of numbers. We also included
-  a specific string "<br>" at every point we wanted a line break in the output, and had the REPLHistory class deal with this too.
-
-- We coded the CSV functionality in the REPLFunction class. The functions here are separated from REPLInput because this allowed us
-  to code user story 6 easier and it also allowed for better code organization.
+- The REPLFunction module defines a set of properties required for executing REPL functions within the REPL environment. These properties include arguments, command history, mode, current command, current file, mocked files, and mocked search queries. It also provides default custom commands to load, search, and view the mocked CSVs. The module exports a set of default custom commands to easily use those as a "default" set of commands.
 
 # Errors/Bugs
 
-- Having the search history be represented as a hashmap (key: command, value: output) caused repeating commands to override keys
-  and interfere with search history. We fixed this by including the timestamp of each addtion to the hashmap, and filtered it
-  out of being printed out by slicing the string based on some arbitrary key we felt would not be important to the search
-  functionality (~).
-
-- There were frequent bugs with misuisng props. When trying to extract out and make our code cleaner by separating functions, connecting
-  the classes through props was very tedious. Most of these were small and easy fixes, though, and were caused by re-instantiating
-  the prop as a variable or forgetting to include "props." before the variable name.
-
--
+- No bugs
 
 # Tests
+
+To run the tests, you can then run npx playwright test (while also CDed into the mock directory). We did end to end testing with Playwright. We tested that our login button worked, that our interface for the user to type into worked, and that various load, search, and view commands viewed as expected. We also tested for malformed inputs: both for commands that didn't exist, and also for bad inputs into commands like load/view/search. We also tested to make sure that the user could easily and accurately switch between modes, and clear the display if necessary. We also tested that the user would receive informative error messages upon entering in a bad input, and that they would receive another helpful message if they typed in "help". We also tested the interaction between load/view/search functionality, making sure that if you loaded in another CSV after loading/viewing another the search/view results would be different.
 
 # How to
 
