@@ -1,5 +1,3 @@
-> **GETTING STARTED:** You should likely start with the `/mock` folder from your solution code for the mock gearup.
-
 # Project Details
 
 Mock
@@ -54,5 +52,3 @@ Available Commands:
 - clear: Clears search history (arguments: 1).
 
 # Collaboration
-
-N/A
