@@ -1,4 +1,4 @@
-import { Dispatch } from "react";
+import { Dispatch, Key } from "react";
 import "../styles/main.css";
 
 interface REPLHistoryProps {
@@ -10,19 +10,18 @@ export function REPLHistory(props: REPLHistoryProps) {
   return (
     <div className="repl-history">
       {Object.keys(props.history).map((key, i) => {
-        const command = key.split("_")[0]; // Extracting command before the underscore
+        const command = key.split("~")[0]; // Extracting command before the underscore
         let output = props.history[key];
         console.log(output);
         if (props.mode === 0) {
           // 'brief' mode: display only the output
           const outputLines = output
             .split("<br>")
-            .map((line, index) => (
+            .map((line: any, index: Key | null | undefined) => (
               <div key={index} dangerouslySetInnerHTML={{ __html: line }}></div>
             ));
           return (
             <div className="output-wrapper" id={command} key={i}>
-              
               <div className="output-table">{outputLines}</div>
             </div>
           );
@@ -36,7 +35,7 @@ export function REPLHistory(props: REPLHistoryProps) {
           // ));
           const outputLines = output
             .split("<br>")
-            .map((line, index) => (
+            .map((line: any, index: Key | null | undefined) => (
               <div key={index} dangerouslySetInnerHTML={{ __html: line }}></div>
             ));
           return (
