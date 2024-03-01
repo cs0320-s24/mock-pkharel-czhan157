@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { ControlledInput } from "./ControlledInput";
+import { SearchQuery } from './MockedJSON';
 
 interface REPLInputProps {
   history: { [key: string]: any };
@@ -8,6 +9,10 @@ interface REPLInputProps {
   setMode: Dispatch<SetStateAction<number>>;
   currCommand: string;
   setCurrCommand: Dispatch<SetStateAction<string>>;
+  currFile: string;
+  setCurrFile: Dispatch<SetStateAction<string>>;
+  mockedFiles: Record<string, string[][]>;
+  mockedSearch: SearchQuery[]; 
 }
 
 export function REPLInput(props: REPLInputProps) {
@@ -15,6 +20,7 @@ export function REPLInput(props: REPLInputProps) {
   const [csvData, setCsvData] = useState<string[][]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchResults, setSearchResults] = useState<string[][]>([]);
+  const [currFile, setCurrFile] = useState<string>("");
 
   const validCommands: string[] = [
     "mode",
@@ -26,32 +32,32 @@ export function REPLInput(props: REPLInputProps) {
     "check_mode",
   ];
 
-  const mockedFiles: Record<string, string[][]> = {
-    "example.csv": [
-      ["header1", "header2"],
-      ["data1", "data2"],
-      ["data3", "data4"],
-    ],
+  // const mockedFiles: Record<string, string[][]> = {
+  //   "example.csv": [
+  //     ["header1", "header2"],
+  //     ["data1", "data2"],
+  //     ["data3", "data4"],
+  //   ],
 
-    "cats.csv": [
-      ["name", "age"],
-      ["frenchie", "5"],
-      ["fry", "5"],
-      ["french fry", "3"],
-      ["belgian fry", "2"],
-      ["the french one", "1"],
-      ["fry", "0"],
-    ],
+  //   "cats.csv": [
+  //     ["name", "age"],
+  //     ["frenchie", "5"],
+  //     ["fry", "5"],
+  //     ["french fry", "3"],
+  //     ["belgian fry", "2"],
+  //     ["the french one", "1"],
+  //     ["fry", "0"],
+  //   ],
 
-    "fruits.csv": [
-      ["name", "color"],
-      ["lemon", "yellow"],
-      ["apple", "red or green"],
-      ["orange", "orange"],
-      ["lime", "green"],
-      ["avocado", "green"],
-    ],
-  };
+  //   "fruits.csv": [
+  //     ["name", "color"],
+  //     ["lemon", "yellow"],
+  //     ["apple", "red or green"],
+  //     ["orange", "orange"],
+  //     ["lime", "green"],
+  //     ["avocado", "green"],
+  //   ],
+  // };
 
   const handleSubmit = () => {
     console.log(commandString);
@@ -102,13 +108,14 @@ export function REPLInput(props: REPLInputProps) {
       }));
     } else {
       const filePath = words[1]; // Get the second word as the file path
-      if (!mockedFiles[filePath]) {
+      if (!props.mockedFiles[filePath]) {
         props.setHistory((prevHistory) => ({
           ...prevHistory,
           [`${words.join()}_${Date.now().toString()}`]: "File not found!",
         }));
       } else {
-        setCsvData(mockedFiles[filePath]);
+        setCsvData(props.mockedFiles[filePath]);
+        props.setCurrFile(filePath);
         props.setHistory((prevHistory) => ({
           ...prevHistory,
           [`${words.join()}_${Date.now().toString()}`]: "File successfully loaded",
@@ -119,23 +126,6 @@ export function REPLInput(props: REPLInputProps) {
     }
   };
 
-  // const handleViewData = (words: string[]) => {
-  //   console.log(csvData);
-  //   console.log(props.history);
-  //   if (csvData.length === 0 || !props.history.hasOwnProperty("load_file")) {
-  //     props.setHistory((prevHistory) => ({
-  //       ...prevHistory,
-  //       [`${searchQuery}_${Date.now().toString()}`]: "No CSV data loaded!", //property:output string
-  //     }));
-  //   } else {
-  //     const dataString = csvData.map((row) => row.join(", ")).join("\n");
-  //     props.setHistory((prevHistory) => ({
-  //       ...prevHistory,
-  //       //[`${searchQuery}`]: dataString,
-  //       [`${searchQuery}_${Date.now().toString()}`]: dataString,
-  //     }));
-  //   }
-  // };
   const handleViewData = (words: string[]) => {
     console.log(csvData);
     console.log(props.history);
@@ -159,31 +149,71 @@ export function REPLInput(props: REPLInputProps) {
     }
   };
 
-    const handleSearch = (searchQuery: string[]) => {
-      console.log(searchQuery);
-      if (searchQuery.length !== 3) {
-        props.setHistory((prevHistory) => ({
-          ...prevHistory,
-          [`${searchQuery}_${Date.now().toString()}`]:
-            "Search syntax invalid! Use 'help' for assistance!",
-        }));
-      } else {
-        const columnIndex = isNaN(parseInt(searchQuery[1]))
-          ? csvData[0].indexOf(searchQuery[1])
-          : parseInt(searchQuery[1]);
-        const valueIndex = searchQuery[2];
-        const results = csvData.filter((row) => {
-          const columnValue = row[columnIndex];
-          return columnValue === valueIndex;
-        });
-        setSearchResults(results);
-        const resultString = results.map((row) => row.join(", ")).join("\n");
-        props.setHistory((prevHistory) => ({
-          ...prevHistory,
-          [`${searchQuery}`]: resultString,
-        }));
-      }
-    };
+    // const handleSearch = (searchQuery: string[]) => {
+    //   console.log(searchQuery);
+    //   if (searchQuery.length !== 3) {
+    //     props.setHistory((prevHistory) => ({
+    //       ...prevHistory,
+    //       [`${searchQuery}_${Date.now().toString()}`]:
+    //         "Search syntax invalid! Use 'help' for assistance!",
+    //     }));
+    //   } else {
+    //     const columnIndex = isNaN(parseInt(searchQuery[1]))
+    //       ? csvData[0].indexOf(searchQuery[1])
+    //       : parseInt(searchQuery[1]);
+    //     const valueIndex = searchQuery[2];
+    //     const results = csvData.filter((row) => {
+    //       const columnValue = row[columnIndex];
+    //       return columnValue === valueIndex;
+    //     });
+    //     setSearchResults(results);
+    //     const resultString = results.map((row) => row.join(", ")).join("\n");
+    //     props.setHistory((prevHistory) => ({
+    //       ...prevHistory,
+    //       [`${searchQuery}`]: resultString,
+    //     }));
+    //   }
+    // };
+      const handleSearch = (searchQuery: string[]) => {
+        console.log(searchQuery);
+        if (searchQuery.length !== 3) {
+          props.setHistory((prevHistory) => ({
+            ...prevHistory,
+            [`${searchQuery}_${Date.now().toString()}`]:
+              "Search syntax invalid! Use 'help' for assistance!",
+          }));
+        } else {
+          const query = searchQuery[1];
+          const index = searchQuery[2];
+    const foundQuery = props.mockedSearch.find((item) => item.query === query);
+    if (foundQuery) {
+      const results = foundQuery.results;
+      const resultString = results
+        .map((result) => {
+          const fileName = result.file;
+          const searchData = result.data;
+          if (fileName === props.currFile){
+          //const searchData = props.mockedFiles[fileName];
+          //const filteredData = searchData.filter((row) => {
+          //  const valueIndex = searchQuery[1];
+         //   return row.includes(valueIndex);
+         // });
+          return `Results from file: ${fileName}\n${searchData
+            .map((row) => row.join(", "))
+            .join("\n")}`;
+    }})
+        .join("\n\n");
+      props.setHistory((prevHistory) => ({
+        ...prevHistory,
+        [`${searchQuery}_${Date.now().toString()}`]: resultString,
+      }));
+    } else {
+      props.setHistory((prevHistory) => ({
+        ...prevHistory,
+        [`${searchQuery}_${Date.now().toString()}`]: "No results found!",
+      }));
+    }}}
+  
 
   const handleMode = (words: string[]) => {
     if (words.length !== 2) {

@@ -2,6 +2,8 @@ import { useState } from "react";
 import "../styles/main.css";
 import { REPLHistory } from "./REPLHistory";
 import { REPLInput } from "./REPLInput";
+import { mockedData} from "./MockedJSON";
+import {searchQueries} from "./MockedJSON";
 //import REPLFunctions from "./REPLFunctions";
 
 /* 
@@ -18,6 +20,7 @@ export default function REPL() {
   const [history, setHistory] = useState<{ [key: string]: any }>({});
   const [mode, setMode] = useState<number>(0);
   const [currCommand, setCurrCommand] = useState<string>("");
+  const [currFile, setCurrFile] = useState<string>("");
 
   return (
     <div className="repl">
@@ -38,6 +41,10 @@ export default function REPL() {
         setMode={setMode}
         history={history}
         setHistory={setHistory}
+        setCurrFile={setCurrFile}
+        currFile={currFile}
+        mockedFiles={mockedData}
+        mockedSearch={searchQueries}
       />
     </div>
   );
