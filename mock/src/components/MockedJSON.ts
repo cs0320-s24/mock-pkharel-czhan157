@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { ControlledInput } from "./ControlledInput";
 
-
+/**
+ * Mocked data class. Used to simulate the data that would be returned from the server.
+ */
 interface MockedFile {
   [fileName: string]: string[][];
 }
@@ -56,18 +58,59 @@ export const mockedData: Record<string, string[][]> = {
   ],
 };
 
-
-
+/**
+ * Example queries and results.
+ */
 export const searchQueries: SearchQuery[] = [
+  {
+    query: "data1,0",
+    results: [{ file: "example.csv", data: [["data1", "data2"]] }],
+  },
 
-    {query: "data1,0",results: [{ file: "example.csv", data: [["data1", "data2"]] }],},
+  {
+    query: "fry,name",
+    results: [
+      {
+        file: "cats.csv",
+        data: [
+          ["fry", "5"],
+          ["fry", "0"],
+        ],
+      },
+    ],
+  },
 
-  {query: "fry,name",results: [{file: "cats.csv",data: [["fry", "5"],["fry", "0"],]}]},
-
-  {query: "french fry,0",results: [{file: "cats.csv",data: [["french fry", "3"]]}]},
-  {query: "belgian fry,0",results: [{file: "cats.csv",data: [["belgian fry", "2"],["belgian fry", "3"], ["belgian fry", "4"]]}]},
-  {query: "belgian fry,name",results: [{file: "cats.csv",data: [["belgian fry", "2"],["belgian fry", "3"], ["belgian fry", "4"]]}]},
-  {query: "french fry,1",results: []},
+  {
+    query: "french fry,0",
+    results: [{ file: "cats.csv", data: [["french fry", "3"]] }],
+  },
+  {
+    query: "belgian fry,0",
+    results: [
+      {
+        file: "cats.csv",
+        data: [
+          ["belgian fry", "2"],
+          ["belgian fry", "3"],
+          ["belgian fry", "4"],
+        ],
+      },
+    ],
+  },
+  {
+    query: "belgian fry,name",
+    results: [
+      {
+        file: "cats.csv",
+        data: [
+          ["belgian fry", "2"],
+          ["belgian fry", "3"],
+          ["belgian fry", "4"],
+        ],
+      },
+    ],
+  },
+  { query: "french fry,1", results: [] },
 
   {
     query: "fry,0",
@@ -84,9 +127,14 @@ export const searchQueries: SearchQuery[] = [
   {
     query: "green,1",
     results: [
-      {file: "fruits.csv",
-        data: [["lime", "green"],["avocado", "green"]]},
-      {file: "fruitsNoHeader.csv",
-        data: [["lime", "green"]]}]},
-  
+      {
+        file: "fruits.csv",
+        data: [
+          ["lime", "green"],
+          ["avocado", "green"],
+        ],
+      },
+      { file: "fruitsNoHeader.csv", data: [["lime", "green"]] },
+    ],
+  },
 ];

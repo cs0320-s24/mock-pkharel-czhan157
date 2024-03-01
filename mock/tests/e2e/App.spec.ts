@@ -12,10 +12,7 @@ import { expect, test } from "@playwright/test";
 test.beforeEach(async ({ page }) => {
   await page.goto("http://localhost:8000/");
   await page.getByLabel("Login").click();
-
   await page.getByLabel("Command input").click();
-  // ... you'd put it here.
-  // TODO: Is there something we need to do before every test case to avoid repeating code?
 });
 
 /**

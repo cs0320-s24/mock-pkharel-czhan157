@@ -2,6 +2,19 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { ControlledInput } from "./ControlledInput";
 import { SearchQuery } from "./MockedJSON";
 
+/**
+ * Class that handles input from the user and processes it.
+ * @param history - The history of commands and their outputs.
+ * @param setHistory - A function that sets the history of commands and their outputs.
+ * @param mode - A number that determines which of the two modes to run the output in.
+ * @param setMode - A function that sets the mode of the output.
+ * @param currCommand - The current command being used.
+ * @param setCurrCommand - A function that sets the current command being used.
+ * @param currFile - The current file being used.
+ * @param setCurrFile - A function that sets the current file being used.
+ * @param mockedFiles - A dictionary that stores the file name and its contents.
+ * @param mockedSearch - A list of search queries.
+ */
 interface REPLInputProps {
   history: { [key: string]: any };
   setHistory: Dispatch<SetStateAction<{ [key: string]: string }>>;
@@ -22,6 +35,7 @@ export function REPLInput(props: REPLInputProps) {
   const [searchResults, setSearchResults] = useState<string[][]>([]);
   const [currFile, setCurrFile] = useState<string>("");
 
+  // Keep track of valid commands
   const validCommands: string[] = [
     "mode",
     "load_file",
@@ -32,6 +46,7 @@ export function REPLInput(props: REPLInputProps) {
     "check_mode",
   ];
 
+  // Checks if input is a valid command, and processes it if it is
   const handleSubmit = () => {
     console.log(commandString);
     if (validCommands.includes(commandString.split(" ")[0])) {
@@ -39,14 +54,15 @@ export function REPLInput(props: REPLInputProps) {
     } else {
       props.setHistory((prevHistory) => ({
         ...prevHistory,
-        // Append timestamp
+        // Append timestamp to prevent duplicate keys
         [`${commandString}~${Date.now().toString()}`]:
           "Not a valid command! Use 'help' to see a list of valid commands!",
       }));
     }
-    setCommandString("");
+    setCommandString(""); // reset command box for user experience
   };
 
+  // Processes the command and its arguments
   const handleCommands = (words: string[]) => {
     const command = words[0];
     setCommandString(command);
@@ -72,6 +88,12 @@ export function REPLInput(props: REPLInputProps) {
     }
   };
 
+  /**
+   * Function to handle loading a file based on the command input
+   * It checks if the command has correct syntax and if the file exists in mockedFiles
+   * Updates history with appropriate messages based on the outcome
+   * @param words - The command input split into an array of words
+   */
   const handleLoadFile = (words: string[]) => {
     if (words.length !== 2) {
       props.setHistory((prevHistory) => ({
@@ -98,6 +120,12 @@ export function REPLInput(props: REPLInputProps) {
     }
   };
 
+  /**
+   * Function to handle viewing the data of a file based on the command input
+   * It checks if the command has correct syntax and if the file has been loaded
+   * Updates history with appropriate messages based on the outcome
+   * @param words - The command input split into an array of words
+   */
   const handleViewData = (words: string[]) => {
     console.log(csvData);
     console.log(props.history);
@@ -121,6 +149,12 @@ export function REPLInput(props: REPLInputProps) {
     }
   };
 
+  /**
+   * Function to handle searching the data of a file based on the command input
+   * It checks if the command has correct syntax and if the file has been loaded
+   * Updates history with appropriate messages based on the outcome
+   * @param searchQuery - The command input split into an array of words
+   */
   const handleSearch = (searchQuery: string[]) => {
     console.log(searchQuery);
     if (searchQuery.length !== 3) {
@@ -158,24 +192,30 @@ export function REPLInput(props: REPLInputProps) {
         if (!foundMatch) {
           props.setHistory((prevHistory) => ({
             ...prevHistory,
-            [`${searchQuery}_${Date.now().toString()}`]: "No results found!",
+            [`${searchQuery}~${Date.now().toString()}`]: "No results found!",
           }));
         } else {
           const tableHTML = `<table>${tableRows}</table>`;
           props.setHistory((prevHistory) => ({
             ...prevHistory,
-            [`${searchQuery}_${Date.now().toString()}`]: tableHTML,
+            [`${searchQuery}~${Date.now().toString()}`]: tableHTML,
           }));
         }
       } else {
         props.setHistory((prevHistory) => ({
           ...prevHistory,
-          [`${searchQuery}_${Date.now().toString()}`]: "No results found!",
+          [`${searchQuery}~${Date.now().toString()}`]: "No results found!",
         }));
       }
     }
   };
 
+  /**
+   * Function to handle changing the mode of the output based on the command input
+   * It checks if the command has correct syntax and if the mode is valid
+   * Updates history with appropriate messages based on the outcome
+   * @param words - The command input split into an array of words
+   */
   const handleMode = (words: string[]) => {
     if (words.length !== 2) {
       props.setHistory((prevHistory) => ({
@@ -200,6 +240,12 @@ export function REPLInput(props: REPLInputProps) {
     }
   };
 
+  /**
+   * Function to display a helpful message based on the command input
+   * It checks if the command has correct syntax
+   * Updates history with appropriate messages based on the outcome
+   * @param words - The command input split into an array of words
+   */
   const handleHelp = (words: string[]) => {
     if (words.length !== 1) {
       props.setHistory((prevHistory) => ({
@@ -225,6 +271,12 @@ export function REPLInput(props: REPLInputProps) {
     }
   };
 
+  /**
+   * Function to handle clearing the history based on the command input
+   * It checks if the command has correct syntax
+   * Updates history with appropriate messages based on the outcome
+   * @param words - The command input split into an array of words
+   */
   const handleClear = (words: string[]) => {
     if (words.length !== 1) {
       props.setHistory((prevHistory) => ({
@@ -237,6 +289,12 @@ export function REPLInput(props: REPLInputProps) {
     }
   };
 
+  /**
+   * Function to handle checking the mode based on the command input
+   * It checks if the command has correct syntax
+   * Updates history with appropriate messages based on the outcome
+   * @param words - The command input split into an array of words
+   */
   const handleCheckMode = (words: string[]) => {
     if (words.length !== 1) {
       props.setHistory((prevHistory) => ({
@@ -256,6 +314,7 @@ export function REPLInput(props: REPLInputProps) {
     }
   };
 
+  // Render the input box and the submit button
   return (
     <div className="repl-input">
       <fieldset>

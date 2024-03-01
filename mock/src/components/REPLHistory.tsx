@@ -6,6 +6,12 @@ interface REPLHistoryProps {
   mode: number;
 }
 
+/**
+ * Manages the display of commands, output, and previous commands.
+ * @param props.history - A dictionary that stores the command and its output.
+ * @param props.mode - A number that determines which of the two modes to run the output in.
+ * @returns on the frontend as display text.
+ */
 export function REPLHistory(props: REPLHistoryProps) {
   return (
     <div className="repl-history">
@@ -16,11 +22,12 @@ export function REPLHistory(props: REPLHistoryProps) {
         if (props.mode === 0) {
           // 'brief' mode: display only the output
           const outputLines = output
-            .split("<br>")
+            .split("<br>") //split into new lines if string has <br>
             .map((line: any, index: Key | null | undefined) => (
               <div key={index} dangerouslySetInnerHTML={{ __html: line }}></div>
             ));
           return (
+            // displaying csv data
             <div className="output-wrapper" id={command} key={i}>
               <div className="output-table">{outputLines}</div>
             </div>
