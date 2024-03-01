@@ -28,21 +28,27 @@ export function REPLHistory(props: REPLHistoryProps) {
           );
         } else {
           // 'verbose' mode: display command and output
-          const outputLines = output.split("<br>").map((line, index) => (
-            <span key={index}>
-              {line}
-              <br />
-            </span>
-          ));
+          // const outputLines = output.split("<br>").map((line, index) => (
+          //   <span key={index}>
+          //     {line}
+          //     <br />
+          //   </span>
+          // ));
+          const outputLines = output
+            .split("<br>")
+            .map((line, index) => (
+              <div key={index} dangerouslySetInnerHTML={{ __html: line }}></div>
+            ));
           return (
             <div key={i}>
               <p>
                 <strong>Command:</strong> {command}
               </p>
-              <div className="output-table">
+              <div className="output-wrapper">
                 <p>
-                  <strong>Output:</strong> {outputLines}
+                  <strong>Output:</strong>
                 </p>
+                <div className="output-table">{outputLines}</div>
               </div>
             </div>
           );
