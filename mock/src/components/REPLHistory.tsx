@@ -20,7 +20,12 @@ export function REPLHistory(props: REPLHistoryProps) {
             .map((line, index) => (
               <div key={index} dangerouslySetInnerHTML={{ __html: line }}></div>
             ));
-          return <div id={command} key={i}>{outputLines}</div>;
+          return (
+            <div className="output-wrapper" id={command} key={i}>
+              
+              <div className="output-table">{outputLines}</div>
+            </div>
+          );
         } else {
           // 'verbose' mode: display command and output
           const outputLines = output.split("<br>").map((line, index) => (
@@ -34,9 +39,11 @@ export function REPLHistory(props: REPLHistoryProps) {
               <p>
                 <strong>Command:</strong> {command}
               </p>
-              <p>
-                <strong>Output:</strong> {outputLines}
-              </p>
+              <div className="output-table">
+                <p>
+                  <strong>Output:</strong> {outputLines}
+                </p>
+              </div>
             </div>
           );
         }

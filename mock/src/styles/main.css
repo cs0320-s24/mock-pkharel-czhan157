@@ -15,6 +15,14 @@
     display: block;
     overflow: scroll;    
 }
+.output-wrapper {
+  text-align: center;
+}
+
+.output-table {
+  display: inline-block;
+  text-align: center; 
+}
 
 .repl-input {        
     margin: auto;    
