@@ -20,7 +20,7 @@ export function REPLHistory(props: REPLHistoryProps) {
             .map((line, index) => (
               <div key={index} dangerouslySetInnerHTML={{ __html: line }}></div>
             ));
-          return <div key={i}>{outputLines}</div>;
+          return <div id={command} key={i}>{outputLines}</div>;
         } else {
           // 'verbose' mode: display command and output
           const outputLines = output.split("<br>").map((line, index) => (

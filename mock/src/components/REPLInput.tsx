@@ -275,7 +275,11 @@ export function REPLInput(props: REPLInputProps) {
           ariaLabel={"Command input"}
         />
       </fieldset>
-      <button onClick={handleSubmit}>Run Command!</button>
+      <button aria-label="Run Command!" onClick={handleSubmit}>
+        Run Command!
+      </button>
+
+
     </div>
   );
 }
