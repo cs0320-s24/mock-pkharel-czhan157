@@ -143,38 +143,34 @@ export function REPLInput(props: REPLInputProps) {
         let foundMatch = false; // Flag to track if any matching filename is found
 
         const results = foundQuery.results;
-        const resultString = results
+        const tableRows = results
+          .filter((result) => result.file === props.currFile) // Filter results for the current file
           .map((result) => {
-            const fileName = result.file;
             const searchData = result.data;
-            console.log(result);
-            console.log(fileName);
-            console.log(results);
-            console.log(searchData);
-            console.log(props.currFile);
-            if (fileName === props.currFile) {
-              foundMatch = true; // Set the flag to true if a match is found
-              return `Results from file: ${fileName}\n${searchData
-                .map((row) => row.join(", "))
-                .join("\n")}`;
-            } else {
-              return ""; // Return an empty string if the current file doesn't match
-            }
+            foundMatch = true; // Set the flag to true if a match is found
+            return searchData
+              .map((row) => {
+                return `<tr>${row
+                  .map((cell) => `<td>${cell}</td>`)
+                  .join("")}</tr>`;
+              })
+              .join("");
           })
-          .filter((result) => result !== ""); // Filter out empty strings
+          .join("");
+
 
         if (!foundMatch) {
           props.setHistory((prevHistory) => ({
             ...prevHistory,
             [`${searchQuery}_${Date.now().toString()}`]:
-              "No rresults found!",
+              "No results found!",
           }));
         
         } else {
+          const tableHTML = `<table>${tableRows}</table>`;
           props.setHistory((prevHistory) => ({
             ...prevHistory,
-            [`${searchQuery}_${Date.now().toString()}`]:
-              resultString.join("\n\n"),
+            [`${searchQuery}_${Date.now().toString()}`]: tableHTML,
           }));
         }
 
