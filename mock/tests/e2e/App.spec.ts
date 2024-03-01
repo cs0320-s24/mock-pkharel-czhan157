@@ -11,11 +11,8 @@ import { expect, test } from "@playwright/test";
 test.beforeEach(async ({ page }) => {
   await page.goto("http://localhost:8000/");
   await page.getByLabel("Login").click();
-
   await page.getByLabel("Command input").click();
-  
 });
-
 
 test("on page load, i see a login button", async ({ page }) => {
   await page.goto("http://localhost:8000/");
@@ -36,7 +33,6 @@ test("after I type into the input box, its text changes", async ({ page }) => {
   await page.goto("http://localhost:8000/");
   await page.getByLabel("Login").click();
 
-
   // Locate the element you are looking for
   await page.getByLabel("Command input").click();
   await page.getByLabel("Command input").fill("Awesome command");
@@ -46,13 +42,11 @@ test("after I type into the input box, its text changes", async ({ page }) => {
   await expect(page.getByLabel("Command input")).toHaveValue(mock_input);
 });
 
-
 test("i can load a CSV successfully", async ({ page }) => {
   await page.getByLabel("Command input").fill("load_file example.csv");
   await page.getByLabel("Run Command!").click();
 
   await page.waitForTimeout(5000); // Adjust the wait time as needed
-
 
   const responseText = await page.evaluate(() => {
     const responseElement = document.querySelector(".repl-history > div > div");
@@ -70,13 +64,13 @@ test("i cannot load a csv that doesn't exist", async ({ page }) => {
   await page.getByLabel("Command input").fill("load_file examplesekdfjh.csv");
   await page.getByLabel("Run Command!").click();
 
-  await page.waitForTimeout(5000); 
+  await page.waitForTimeout(5000);
 
   const responseText = await page.evaluate(() => {
     const responseElement = document.querySelector(".repl-history > div > div");
-    console.log(responseElement); 
+    console.log(responseElement);
     if (responseElement !== null) {
-      return responseElement.textContent; 
+      return responseElement.textContent;
     }
   });
 
@@ -94,11 +88,10 @@ test("i cannot load a csv with malformed inputs", async ({ page }) => {
 
   // Extract the text content of the response element
   const responseText = await page.evaluate(() => {
-    
     const responseElement = document.querySelector(".repl-history > div > div");
-    console.log(responseElement); 
+    console.log(responseElement);
     if (responseElement !== null) {
-      return responseElement.textContent; 
+      return responseElement.textContent;
     }
   });
 
@@ -251,7 +244,6 @@ test("multiple loading and viewing works", async ({ page }) => {
   expect(noHeaderHTML.replace(/\s+/g, "")).toBe(expectedNoHeaderHTML);
 });
 
-
 test("multiple loading and searching and viewing works", async ({ page }) => {
   // Load the CSV data
   await page.getByLabel("Command input").fill("load_file fruits.csv");
@@ -334,7 +326,6 @@ test("multiple loading and searching and viewing works", async ({ page }) => {
 
   // Assert that the response HTML matches the expected HTML
   expect(fruitSearchHTML.replace(/\s+/g, "")).toBe(expectedFruitHTML);
-
 });
 
 test("basic search works", async ({ page }) => {
@@ -369,8 +360,7 @@ test("basic search works", async ({ page }) => {
 
   // Assert that the response HTML matches the expected HTML
   expect(fruitSearchHTML.replace(/\s+/g, "")).toBe(expectedFruitHTML);
-
-})
+});
 
 test("basic search in a row works", async ({ page }) => {
   // Load the CSV data
@@ -405,7 +395,9 @@ test("basic search in a row works", async ({ page }) => {
   // Assert that the response HTML matches the expected HTML
   expect(fruitSearchHTML.replace(/\s+/g, "")).toBe(expectedFruitHTML);
 
-  await page.getByLabel("Command input").fill("search 1 skdjfhsdjkfhskdjfhskjdfhskjdfh");
+  await page
+    .getByLabel("Command input")
+    .fill("search 1 skdjfhsdjkfhskdjfhskjdfhskjdfh");
   await page.getByLabel("Run Command!").click();
   await page.waitForTimeout(2000);
 
@@ -461,9 +453,7 @@ test("basic search with space works", async ({ page }) => {
   // Assert that the response HTML matches the expected HTML
   expect(fruitSearchHTML.replace(/\s+/g, "")).toBe(expectedFruitHTML);
 
-  await page
-    .getByLabel("Command input")
-    .fill("search 0 belgian fry");
+  await page.getByLabel("Command input").fill("search 0 belgian fry");
   await page.getByLabel("Run Command!").click();
   await page.waitForTimeout(2000);
 
@@ -486,15 +476,12 @@ test("basic search with space works", async ({ page }) => {
   expect(noSearchHTML.replace(/\s+/g, "")).toBe(unfortunateHTML);
 });
 
-
-
 test("informative message with help", async ({ page }) => {
   // Load the CSV data
 
   await page.getByLabel("Command input").fill("help");
   await page.getByLabel("Run Command!").click();
   await page.waitForTimeout(2000); // Wait for the file to load
-
 
   // Extract the HTML content of the response element
   const helpHTML = await page.evaluate(() => {
@@ -514,8 +501,6 @@ test("informative message with help", async ({ page }) => {
   expect(helpHTML.replace(/\s+/g, "")).toBe(expectedHelp);
 });
 
-
-
 test("clear works", async ({ page }) => {
   // Load the CSV data
 
@@ -527,7 +512,6 @@ test("clear works", async ({ page }) => {
   await page.getByLabel("Command input").fill("view");
   await page.getByLabel("Run Command!").click();
   await page.waitForTimeout(2000); // Wait for the view command to execute
-
 
   await page.getByLabel("Command input").fill("clear");
   await page.getByLabel("Run Command!").click();
@@ -575,7 +559,6 @@ test("mode works", async ({ page }) => {
   expect(helpHTML.replace(/\s+/g, "")).toBe(expectedHelp);
 });
 
-
 test("check mode works", async ({ page }) => {
   // Load the CSV data
 
@@ -599,7 +582,6 @@ test("check mode works", async ({ page }) => {
   // Assert that the response HTML matches the expected HTML
   expect(helpHTML.replace(/\s+/g, "")).toBe(expectedHelp);
 });
-
 
 test("view command with different mode", async ({ page }) => {
   // Load the CSV data

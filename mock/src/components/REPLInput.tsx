@@ -2,6 +2,22 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { ControlledInput } from "./ControlledInput";
 import { SearchQuery } from "./MockedJSON";
 import { REPLFunction } from "./REPLFunction";
+
+/**
+ * Represents the properties required for the REPL input.
+ * @param history - Dictionary of strings representing the command and its output
+ * @param setHistory - Function to set the history state
+ * @param mode - Number representing the mode of the REPL
+ * @param setMode - Function to set the mode state
+ * @param currCommand - String representing the current command
+ * @param setCurrCommand - Function to set the current command state
+ * @param currFile - String representing the current file
+ * @param setCurrFile - Function to set the current file state
+ * @param mockedFiles - Dictionary of strings representing the mocked files
+ * @param mockedSearch - Array of SearchQuery objects
+ * @param customCommands - Array of custom commands
+ * @returns - Object containing the REPL input properties
+ */
 interface REPLInputProps {
   history: { [key: string]: any };
   setHistory: Dispatch<SetStateAction<{ [key: string]: string }>>;
@@ -19,15 +35,12 @@ interface REPLInputProps {
   }[];
 }
 
-
 export function REPLInput(props: REPLInputProps) {
   const [commandString, setCommandString] = useState<string>("");
   const [csvData, setCsvData] = useState<string[][]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [searchResults, setSearchResults] = useState<string[][]>([]);
-  const [currFile, setCurrFile] = useState<string>("");
-  
 
+  // Keep track of valid commands
   const validCommands: string[] = [
     "mode",
     "load_file",
@@ -39,81 +52,93 @@ export function REPLInput(props: REPLInputProps) {
     ...props.customCommands.map((cmd) => cmd.name),
   ];
 
+  // Checks if input is a valid command, and processes it if it is
   const handleSubmit = () => {
-    console.log(commandString);
     if (validCommands.includes(commandString.split(" ")[0])) {
       handleCommands(commandString.split(" "));
     } else {
       props.setHistory((prevHistory) => ({
         ...prevHistory,
-        // Append timestamp
-        [`${commandString}_${Date.now().toString()}`]:
+        // Append timestamp to prevent duplicate keys
+        [`${commandString}~${Date.now().toString()}`]:
           "Not a valid command! Use 'help' to see a list of valid commands!",
       }));
     }
-    setCommandString("");
+    setCommandString(""); // reset command box for user experience
   };
 
-  
-
-
+  /**
+   * Handles the execution of commands based on the input words array.
+   * It checks the command and calls the corresponding function to execute it.
+   * If the command is a custom command, it looks up the command in the customCommands array
+   * and executes its associated function with the inputProps.
+   * @param words - Array of strings representing the command and its arguments
+   */
   const handleCommands = (words: string[]) => {
     const inputProps: REPLFunction = {
-    args: words,
-    history: props.history,
-    setHistory: props.setHistory,
-    mode: props.mode,
-    setMode: props.setMode,
-    currCommand: props.currCommand,
-    setCurrCommand: props.setCurrCommand,
-    currFile: props.currFile,
-    setCurrFile: props.setCurrFile,
-    mockedFiles: props.mockedFiles,
-    mockedSearch: props.mockedSearch,
-  };
+      args: words,
+      history: props.history,
+      setHistory: props.setHistory,
+      mode: props.mode,
+      setMode: props.setMode,
+      currCommand: props.currCommand,
+      setCurrCommand: props.setCurrCommand,
+      currFile: props.currFile,
+      setCurrFile: props.setCurrFile,
+      mockedFiles: props.mockedFiles,
+      mockedSearch: props.mockedSearch,
+    };
 
     const command = words[0];
     setCommandString(command);
-    console.log(command);
-    console.log(words);
     if (command === "mode") {
       handleMode(words);
-    } else if (command === "load_file" && props.customCommands.some(cmd => cmd.name === "load_file")) {
-       props.setCurrCommand(command);
-       handleLoadFile(words);
-     } else if (command === "view" && props.customCommands.some(cmd => cmd.name === "view")) {
-       props.setCurrCommand(command);
-       handleViewData(words);
-     } else if (
-       command === "search" &&
-       props.customCommands.some((cmd) => cmd.name === "search")
-     ) {
-       props.setCurrCommand(command);
-       handleSearch(words);
-     } else if (command === "help") {
-       handleHelp(words);
-     } else if (command === "clear") {
-       handleClear(words);
-     } else if (command === "check_mode") {
-       handleCheckMode(words);
-     } else {
-       const customCommand = props.customCommands.find(
-         (cmd) => cmd.name === command
-       );
-       if (customCommand) {
-         console.log(customCommand);
-         const result = customCommand.func(inputProps);
-         props.setCurrCommand(command);
-         console.log(result);
-       }
-     }
+    } else if (
+      command === "load_file" &&
+      props.customCommands.some((cmd) => cmd.name === "load_file")
+    ) {
+      props.setCurrCommand(command);
+      handleLoadFile(words);
+    } else if (
+      command === "view" &&
+      props.customCommands.some((cmd) => cmd.name === "view")
+    ) {
+      props.setCurrCommand(command);
+      handleViewData(words);
+    } else if (
+      command === "search" &&
+      props.customCommands.some((cmd) => cmd.name === "search")
+    ) {
+      props.setCurrCommand(command);
+      handleSearch(words);
+    } else if (command === "help") {
+      handleHelp(words);
+    } else if (command === "clear") {
+      handleClear(words);
+    } else if (command === "check_mode") {
+      handleCheckMode(words);
+    } else {
+      const customCommand = props.customCommands.find(
+        (cmd) => cmd.name === command
+      );
+      if (customCommand) {
+        const result = customCommand.func(inputProps);
+        props.setCurrCommand(command);
+      }
+    }
   };
 
+  /**
+   * Function to handle loading a file based on the command input
+   * It checks if the command has correct syntax and if the file exists in mockedFiles
+   * Updates history with appropriate messages based on the outcome
+   * @param words - The command input split into an array of words
+   */
   const handleLoadFile = (words: string[]) => {
     if (words.length !== 2) {
       props.setHistory((prevHistory) => ({
         ...prevHistory,
-        [`${words.join()}_${Date.now().toString()}`]:
+        [`${words.join()}~${Date.now().toString()}`]:
           "File did not load! Ensure correct syntax by using the help command!",
       }));
     } else {
@@ -121,7 +146,7 @@ export function REPLInput(props: REPLInputProps) {
       if (!props.mockedFiles[filePath]) {
         props.setHistory((prevHistory) => ({
           ...prevHistory,
-          [`${words.join()}_${Date.now().toString()}`]: "File not found!",
+          [`${words.join()}~${Date.now().toString()}`]: "File not found!",
         }));
       } else {
         setCsvData(props.mockedFiles[filePath]);
@@ -130,21 +155,22 @@ export function REPLInput(props: REPLInputProps) {
           ...prevHistory,
           [`${words.join()}_${Date.now().toString()}`]:
             "File successfully loaded",
-          
         }));
       }
     }
   };
 
+  /**
+   * Function to handle viewing the data of a file based on the command input
+   * It checks if the command has correct syntax and if the file has been loaded
+   * Updates history with appropriate messages based on the outcome
+   * @param words - The command input split into an array of words
+   */
   const handleViewData = (words: string[]) => {
-    console.log(csvData);
-    console.log(props.history);
-    console.log(csvData.length);
     if (csvData.length === 0) {
-      
       props.setHistory((prevHistory) => ({
         ...prevHistory,
-        [`${searchQuery}_${Date.now().toString()}`]: "No CSV data loaded!", 
+        [`${searchQuery}_${Date.now().toString()}`]: "No CSV data loaded!",
       }));
     } else {
       const tableRows = csvData
@@ -155,17 +181,22 @@ export function REPLInput(props: REPLInputProps) {
       const tableHTML = `<table>${tableRows}</table>`;
       props.setHistory((prevHistory) => ({
         ...prevHistory,
-        [`${searchQuery}_${Date.now().toString()}`]: tableHTML,
+        [`${commandString}~${Date.now().toString()}`]: tableHTML,
       }));
     }
   };
 
+  /**
+   * Function to handle searching the data of a file based on the command input
+   * It checks if the command has correct syntax and if the file has been loaded
+   * Updates history with appropriate messages based on the outcome
+   * @param searchQuery - The command input split into an array of words
+   */
   const handleSearch = (searchQuery: string[]) => {
-    console.log(searchQuery);
     if (searchQuery.length < 3) {
       props.setHistory((prevHistory) => ({
         ...prevHistory,
-        [`${searchQuery}_${Date.now().toString()}`]:
+        [`${searchQuery}~${Date.now().toString()}`]:
           "Search syntax invalid! Use 'help' for assistance!",
       }));
     } else {
@@ -176,11 +207,11 @@ export function REPLInput(props: REPLInputProps) {
       );
 
       if (foundQuery) {
-        let foundMatch = false; 
+        let foundMatch = false;
 
         const results = foundQuery.results;
         const tableRows = results
-          .filter((result) => result.file === props.currFile) 
+          .filter((result) => result.file === props.currFile)
           .map((result) => {
             const searchData = result.data;
             foundMatch = true; // Set the flag to true if a match is found
@@ -203,7 +234,7 @@ export function REPLInput(props: REPLInputProps) {
           const tableHTML = `<table>${tableRows}</table>`;
           props.setHistory((prevHistory) => ({
             ...prevHistory,
-            [`${searchQuery}_${Date.now().toString()}`]: tableHTML,
+            [`${searchQuery}~${Date.now().toString()}`]: tableHTML,
           }));
         }
       } else {
@@ -215,35 +246,47 @@ export function REPLInput(props: REPLInputProps) {
     }
   };
 
+  /**
+   * Function to handle changing the mode of the output based on the command input
+   * It checks if the command has correct syntax and if the mode is valid
+   * Updates history with appropriate messages based on the outcome
+   * @param words - The command input split into an array of words
+   */
   const handleMode = (words: string[]) => {
     if (words.length !== 2) {
       props.setHistory((prevHistory) => ({
         ...prevHistory,
-        [`${commandString}_${Date.now().toString()}`]:
+        [`${commandString}~${Date.now().toString()}`]:
           "Invalid syntax! Use 'help' to see the correct syntax!",
       }));
     } else if (words[1] === "brief") {
       props.setMode(0);
       props.setHistory((prevHistory) => ({
         ...prevHistory,
-        [`${commandString}_${Date.now().toString()}`]:
+        [`${commandString}~${Date.now().toString()}`]:
           "Success! Now in brief mode!",
       }));
     } else if (words[1] === "verbose") {
       props.setMode(1);
       props.setHistory((prevHistory) => ({
         ...prevHistory,
-        [`${commandString}_${Date.now().toString()}`]:
+        [`${commandString}~${Date.now().toString()}`]:
           "Success! Now in verbose mode!",
       }));
     }
   };
 
+  /**
+   * Function to display a helpful message based on the command input
+   * It checks if the command has correct syntax
+   * Updates history with appropriate messages based on the outcome
+   * @param words - The command input split into an array of words
+   */
   const handleHelp = (words: string[]) => {
     if (words.length !== 1) {
       props.setHistory((prevHistory) => ({
         ...prevHistory,
-        [`${commandString}_${Date.now().toString()}`]:
+        [`${commandString}~${Date.now().toString()}`]:
           "Invalid syntax! Use 'help' to see the correct syntax!",
       }));
     } else {
@@ -259,27 +302,40 @@ export function REPLInput(props: REPLInputProps) {
 
       props.setHistory((prevHistory) => ({
         ...prevHistory,
-        [`${commandString}_${Date.now().toString()}`]: helpMessage,
+        [`${commandString}~${Date.now().toString()}`]: helpMessage,
       }));
     }
   };
 
+  /**
+   * Function to handle clearing the history based on the command input
+   * It checks if the command has correct syntax
+   * Updates history with appropriate messages based on the outcome
+   * @param words - The command input split into an array of words
+   */
   const handleClear = (words: string[]) => {
     if (words.length !== 1) {
       props.setHistory((prevHistory) => ({
         ...prevHistory,
-        [`${searchQuery}`]: `${Date.now().toString()}: Invalid syntax! Use help to see the correct syntax! Date.now().toString()`,
+        [`${commandString}~${Date.now().toString()}`]:
+          "Invalid syntax! Use help to see the correct syntax!",
       }));
     } else {
       props.setHistory({});
     }
   };
 
+  /**
+   * Function to handle checking the mode based on the command input
+   * It checks if the command has correct syntax
+   * Updates history with appropriate messages based on the outcome
+   * @param words - The command input split into an array of words
+   */
   const handleCheckMode = (words: string[]) => {
     if (words.length !== 1) {
       props.setHistory((prevHistory) => ({
         ...prevHistory,
-        [`${commandString}_${Date.now().toString()}`]:
+        [`${commandString}~${Date.now().toString()}`]:
           "Invalid syntax! Use 'help' to see the correct syntax!",
       }));
     } else {
@@ -289,11 +345,12 @@ export function REPLInput(props: REPLInputProps) {
           : "Currently in verbose mode!";
       props.setHistory((prevHistory) => ({
         ...prevHistory,
-        [`${commandString}_${Date.now().toString()}`]: modeMessage,
+        [`${commandString}~${Date.now().toString()}`]: modeMessage,
       }));
     }
   };
 
+  // Render the input box and the submit button
   return (
     <div className="repl-input">
       <fieldset>
