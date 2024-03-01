@@ -1,4 +1,5 @@
 import { Dispatch, Key } from "react";
+import { REPLFunction, defaultCustomCommands } from "./REPLFunction";
 import "../styles/main.css";
 
 interface REPLHistoryProps {
@@ -18,7 +19,6 @@ export function REPLHistory(props: REPLHistoryProps) {
       {Object.keys(props.history).map((key, i) => {
         const command = key.split("~")[0]; // Extracting command before the underscore
         let output = props.history[key];
-        console.log(output);
         if (props.mode === 0) {
           // 'brief' mode: display only the output
           const outputLines = output

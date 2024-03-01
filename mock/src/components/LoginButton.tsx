@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 
 /**
  * The login button functionality. Toggles from 'Login' to 'Sign out' and vice versa
- * and allows a user to run commands if logged in.
+ * and allows a user to run commands only if logged in.
  */
 interface loginProps {
   isLoggedIn: boolean;

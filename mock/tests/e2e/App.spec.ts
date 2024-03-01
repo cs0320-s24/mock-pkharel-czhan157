@@ -9,6 +9,25 @@ import { expect, test } from "@playwright/test";
  */
 
 // If you needed to do something before every test case...
+
+const mockedProps = {
+  history: {},
+  setHistory: jest.fn(),
+  mode: 0,
+  setMode: jest.fn(),
+  currCommand: "",
+  setCurrCommand: jest.fn(),
+  currFile: "",
+  setCurrFile: jest.fn(),
+  mockedFiles: {
+    "example.csv": [
+      ["header1", "header2"],
+      ["data1", "data2"],
+    ],
+  },
+  mockedSearch: [],
+};
+
 test.beforeEach(async ({ page }) => {
   await page.goto("http://localhost:8000/");
   await page.getByLabel("Login").click();
@@ -220,3 +239,5 @@ test("view command displays CSV data as HTML table", async ({ page }) => {
   // Assert that the response HTML matches the expected HTML
   expect(responseHTML.replace(/\s+/g, "")).toBe(expectedHTML);
 });
+
+

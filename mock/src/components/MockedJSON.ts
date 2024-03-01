@@ -68,7 +68,12 @@ export const searchQueries: SearchQuery[] = [
   },
 
   {
-    query: "fry,name",
+    query: "0,data1",
+    results: [{ file: "example.csv", data: [["data1", "data2"]] }],
+  },
+
+  {
+    query: "name,fry",
     results: [
       {
         file: "cats.csv",
@@ -81,11 +86,11 @@ export const searchQueries: SearchQuery[] = [
   },
 
   {
-    query: "french fry,0",
+    query: "0,french fry",
     results: [{ file: "cats.csv", data: [["french fry", "3"]] }],
   },
   {
-    query: "belgian fry,0",
+    query: "0,belgian fry",
     results: [
       {
         file: "cats.csv",
@@ -98,7 +103,7 @@ export const searchQueries: SearchQuery[] = [
     ],
   },
   {
-    query: "belgian fry,name",
+    query: "name,belgian fry",
     results: [
       {
         file: "cats.csv",
@@ -110,10 +115,10 @@ export const searchQueries: SearchQuery[] = [
       },
     ],
   },
-  { query: "french fry,1", results: [] },
+  { query: "1,french fry", results: [] },
 
   {
-    query: "fry,0",
+    query: "0,fry",
     results: [
       {
         file: "cats.csv",
@@ -125,7 +130,7 @@ export const searchQueries: SearchQuery[] = [
     ],
   },
   {
-    query: "green,1",
+    query: "1,green",
     results: [
       {
         file: "fruits.csv",

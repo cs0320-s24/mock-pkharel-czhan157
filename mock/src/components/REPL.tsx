@@ -4,6 +4,7 @@ import { REPLHistory } from "./REPLHistory";
 import { REPLInput } from "./REPLInput";
 import { mockedData } from "./MockedJSON";
 import { searchQueries } from "./MockedJSON";
+import { REPLFunction, defaultCustomCommands } from "./REPLFunction";
 
 /**
  * Top level component that extends props to various subcomponents.
@@ -32,6 +33,7 @@ export default function REPL() {
         currFile={currFile}
         mockedFiles={mockedData}
         mockedSearch={searchQueries}
+        customCommands={defaultCustomCommands}
       />
     </div>
   );
