@@ -102,6 +102,65 @@ test("i can load a CSV successfully", async ({ page }) => {
   expect(responseText).toBe(expectedResponseText);
 });
 
+test("i cannot load a csv that doesn't exist", async ({ page }) => {
+  // TODO: Fill this in to test your button push functionality!
+  await page.goto("http://localhost:8000/");
+  await page.getByLabel("Login").click();
+
+  await page.getByLabel("Command input").click();
+  await page.getByLabel("Command input").fill("load_file examplesekdfjh.csv");
+  await page.getByLabel("Run Command!").click();
+
+  // Wait for some time to let the page update with the response
+  await page.waitForTimeout(5000); // Adjust the wait time as needed
+
+  //await page.waitForSelector(".repl-history > div:last-child");
+  // Extract the text content of the response element
+  const responseText = await page.evaluate(() => {
+    //page.on('console', document => console.log(document));
+    const responseElement = document.querySelector(".repl-history > div > div");
+    console.log(responseElement); // Replace "#responseElementSelector"
+    if (responseElement !== null) {
+      return responseElement.textContent; //.trim();
+    }
+  });
+
+  // Step 3: Assert something about the response text
+  // Assertions are done by using the expect() function
+  const expectedResponseText = "File not found!";
+  expect(responseText).toBe(expectedResponseText);
+});
+
+test("i cannot load a csv with malformed inputs", async ({ page }) => {
+  // TODO: Fill this in to test your button push functionality!
+  await page.goto("http://localhost:8000/");
+  await page.getByLabel("Login").click();
+
+  await page.getByLabel("Command input").click();
+  await page.getByLabel("Command input").fill("load_file load_file example.csv");
+  await page.getByLabel("Run Command!").click();
+
+  // Wait for some time to let the page update with the response
+  await page.waitForTimeout(5000); // Adjust the wait time as needed
+
+  //await page.waitForSelector(".repl-history > div:last-child");
+  // Extract the text content of the response element
+  const responseText = await page.evaluate(() => {
+    //page.on('console', document => console.log(document));
+    const responseElement = document.querySelector(".repl-history > div > div");
+    console.log(responseElement); // Replace "#responseElementSelector"
+    if (responseElement !== null) {
+      return responseElement.textContent; //.trim();
+    }
+  });
+
+  // Step 3: Assert something about the response text
+  // Assertions are done by using the expect() function
+  const expectedResponseText =
+    "File did not load! Ensure correct syntax by using the help command!";
+  expect(responseText).toBe(expectedResponseText);
+});
+
 // test("i cannot load a CSV that isn't mocked", async ({ page }) => {
 //   // TODO: Fill this in to test your button push functionality!
 //   await page.goto("http://localhost:8000/");
