@@ -27,12 +27,6 @@ export function REPLHistory(props: REPLHistoryProps) {
           );
         } else {
           // 'verbose' mode: display command and output
-          // const outputLines = output.split("<br>").map((line, index) => (
-          //   <span key={index}>
-          //     {line}
-          //     <br />
-          //   </span>
-          // ));
           const outputLines = output
             .split("<br>")
             .map((line: any, index: Key | null | undefined) => (

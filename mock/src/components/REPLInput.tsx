@@ -133,29 +133,44 @@ export function REPLInput(props: REPLInputProps) {
       const query = searchQuery[1];
       const index = searchQuery[2];
       const foundQuery = props.mockedSearch.find(
-        (item) => item.query === query
+        (item) => item.query === query + "," + index
       );
+
       if (foundQuery) {
+        let foundMatch = false; // Flag to track if any matching filename is found
+
         const results = foundQuery.results;
-        const resultString = results
+        const tableRows = results
+          .filter((result) => result.file === props.currFile) // Filter results for the current file
           .map((result) => {
-            const fileName = result.file;
             const searchData = result.data;
-            if (fileName === props.currFile) {
-              return `Results from file: ${fileName}\n${searchData
-                .map((row) => row.join(", "))
-                .join("\n")}`;
-            }
+            foundMatch = true; // Set the flag to true if a match is found
+            return searchData
+              .map((row) => {
+                return `<tr>${row
+                  .map((cell) => `<td>${cell}</td>`)
+                  .join("")}</tr>`;
+              })
+              .join("");
           })
-          .join("\n\n");
-        props.setHistory((prevHistory) => ({
-          ...prevHistory,
-          [`${commandString}~${Date.now().toString()}`]: resultString,
-        }));
+          .join("");
+
+        if (!foundMatch) {
+          props.setHistory((prevHistory) => ({
+            ...prevHistory,
+            [`${searchQuery}_${Date.now().toString()}`]: "No results found!",
+          }));
+        } else {
+          const tableHTML = `<table>${tableRows}</table>`;
+          props.setHistory((prevHistory) => ({
+            ...prevHistory,
+            [`${searchQuery}_${Date.now().toString()}`]: tableHTML,
+          }));
+        }
       } else {
         props.setHistory((prevHistory) => ({
           ...prevHistory,
-          [`${commandString}~${Date.now().toString()}`]: "No results found!",
+          [`${searchQuery}_${Date.now().toString()}`]: "No results found!",
         }));
       }
     }
@@ -198,7 +213,7 @@ export function REPLInput(props: REPLInputProps) {
         "mode [brief/verbose]: changes the mode of displaying results of the program. Arguments: 2.<br>" +
         "load_file [filename]: loads a file into the program. You will need to run this before running view or search. Arguments: 2.<br>" +
         "view [filename]: displays the contents of the file. Arguments: 1.<br>" +
-        "search [column] [value]: searches the file and returns the rows of the CSV where <value> is present in <column>. Arguments: 3.<br>" +
+        "search [value] [column]: searches the file and returns the rows of the CSV where <value> is present in <column>. Arguments: 3.<br>" +
         "help: displays this helpful message! Arguments: 1.<br>" +
         "check_mode: checks the current mode. Arguments: 1.<br>" +
         "clear: clears search history. Will not display verbose output, will simply rid the screen of past output.  Arguments: 1.";
